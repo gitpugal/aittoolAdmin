@@ -52,7 +52,7 @@ export function UserAuthForm({ ...props }: UserAuthFormProps) {
       const daa = dat[0];
       await signIn("credentials", {
         ...daa,
-        callbackUrl: "https://localhost:3000/dashboard",
+        callbackUrl: "https://aitoolsnext-admin-gray.vercel.app/dashboard",
       });
     }
     setIsLoading(false);

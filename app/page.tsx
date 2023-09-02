@@ -18,7 +18,7 @@ export default function Home() {
     if (user.status == "unauthenticated") {
       router.push("/login");
     }
-    const res = fetch("http://localhost:3000/api/tools");
+    const res = fetch("https://aitoolsnext-admin-gray.vercel.app/api/tools");
     res.then((val) => {
       const dat = val.json();
       dat.then((res) => {
