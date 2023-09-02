@@ -8,10 +8,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export const metadata = {
-  title: "Login",
-  description: "Login admin panel",
-};
+// export const metadata = {
+//   title: "Login",
+//   description: "Login admin panel",
+// };
 export default function RegisterPage() {
   const user = useSession();
   const router = useRouter();
