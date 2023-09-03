@@ -70,6 +70,7 @@ export default function Home() {
         <div className="w-[20%] text-white gap-7 px-3 py-10 font-semibold text-3xl items-center justify-start left-0 h-screen  bg-slate-900 flex flex-col">
           {sideBarLinks.map((link) => (
             <h1
+            key={link.id}
               id={link.id.toString()}
               onClick={changeMenu}
               className={`${
