@@ -191,8 +191,9 @@ export default function Home() {
                     <option value={dialogData.primarycategory}>
                       {dialogData.primarycategory}
                     </option>
-                    {categories.map((cat) => (
-                      <option value={cat.name}>{cat.name}</option>
+                    {categories.map((cat, index) => (
+
+                      <option key={cat.name+""+index} value={cat.name}>{cat.name}</option>
                     ))}
                   </select>
                 </div>
@@ -215,7 +216,7 @@ export default function Home() {
                 <div className="grid grid-cols-3">
                   {tools.map((el) => {
                     if (el.id == dialogData.id) {
-                      return <p className="bg-slate-100 w-fit px-3 py-2 rounded-lg">{el.name}</p>;
+                      return <p key={el.id+""+el.name} className="bg-slate-100 w-fit px-3 py-2 rounded-lg">{el.name}</p>;
                     }
                   })}
                 </div>
