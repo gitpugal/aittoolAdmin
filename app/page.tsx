@@ -45,11 +45,11 @@ export default function Home() {
       name: "Settings",
     },
   ];
-  // useEffect(() => {
-  //   if (user.status == "unauthenticated") {
-  //     router.push("/login");
-  //   }
-  // }, [user.status]);
+  useEffect(() => {
+    if (user.status == "unauthenticated") {
+      router.push("/login");
+    }
+  }, [user.status]);
 
   function fetchData() {
     const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
@@ -75,9 +75,9 @@ export default function Home() {
     });
   }
   useEffect(() => {
-    // if (user.status == "unauthenticated") {
-    //   router.push("/login");
-    // }
+    if (user.status == "unauthenticated") {
+      router.push("/login");
+    }
     fetchData();
   }, []);
   function changeMenu(e) {
