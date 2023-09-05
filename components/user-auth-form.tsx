@@ -44,14 +44,14 @@ export function UserAuthForm({ ...props }: UserAuthFormProps) {
       },
       body: requestBody,
     });
-    const dat = await res.json();
     if (res.status != 200) {
       setIsLoading(false);
-      alert("wrong credentials")
+      alert("wrong credentials");
       toast({
         title: "wrong credentials!, Try again.",
       });
     } else {
+      const dat = await res.json();
       setIsLoading(false);
 
       console.log(dat[0]);
