@@ -20,7 +20,7 @@ import { ArrowLeft, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-function page({ params }: { params: { slug: string } }){
+export default function Tool({ params }: { params: { slug: string } }) {
   const { toast } = useToast();
   const router = useRouter();
 
@@ -108,7 +108,9 @@ function page({ params }: { params: { slug: string } }){
 
   function fetchData() {
     const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
+    const categorytoolRes = fetch(
+      "https://admin.aitoolsnext.com/api/categoryTools"
+    );
     const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
@@ -129,7 +131,10 @@ function page({ params }: { params: { slug: string } }){
   }
   return (
     <div className="p-10 flex items-center justify-center  h-screen">
-        <button className="absolute inline top-5 left-5" onClick={() => router.back()}>
+      <button
+        className="absolute inline top-5 left-5"
+        onClick={() => router.back()}
+      >
         <ArrowLeft className="inline" />
         back
       </button>
@@ -259,10 +264,11 @@ function page({ params }: { params: { slug: string } }){
           )}
         </div>
       ) : (
-        <Icons.spinner size={100} className="mr-2 text-9xl h-4 w-4 animate-spin" />
+        <Icons.spinner
+          size={100}
+          className="mr-2 text-9xl h-4 w-4 animate-spin"
+        />
       )}
     </div>
   );
-};
-
-export default page;
+}

@@ -21,7 +21,7 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-function page({ params }: { params: { slug: string } }){
+export default function Category({ params }: { params: { slug: string } }){
   const { toast } = useToast();
   const router = useRouter();
 
@@ -290,5 +290,3 @@ function page({ params }: { params: { slug: string } }){
     </div>
   );
 };
-
-export default page;
