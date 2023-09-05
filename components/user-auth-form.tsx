@@ -46,7 +46,6 @@ export function UserAuthForm({ ...props }: UserAuthFormProps) {
     });
     if (res.status != 200) {
       setIsLoading(false);
-      alert("wrong credentials");
       toast({
         title: "wrong credentials!, Try again.",
       });
