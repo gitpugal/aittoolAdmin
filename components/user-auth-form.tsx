@@ -4,7 +4,7 @@ import { Icons } from "@/components/icons";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/use-toast";
+import { toast, useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { userAuthSchema } from "@/lib/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,10 +29,14 @@ export function UserAuthForm({ ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isGitHubLoading, setIsGitHubLoading] = React.useState<boolean>(false);
   const searchParams = useSearchParams();
+  const { toast } = useToast();
 
   async function onSubmit(data: FormData) {
     setIsLoading(true);
-    const requestBody = JSON.stringify({ email: data.email, password: data.password });
+    const requestBody = JSON.stringify({
+      email: data.email,
+      password: data.password,
+    });
     const res = await fetch("/api/signInHandler", {
       method: "POST",
       headers: {
@@ -42,13 +46,15 @@ export function UserAuthForm({ ...props }: UserAuthFormProps) {
     });
     const dat = await res.json();
     if (res.status != 200) {
-    setIsLoading(false);
-
-      // alert(data.password+" "+data.email+" "+dat.message);
+      setIsLoading(false);
+      alert("wrong credentials")
+      toast({
+        title: "wrong credentials!, Try again.",
+      });
     } else {
-    setIsLoading(false);
+      setIsLoading(false);
 
-      console.log(dat[0])
+      console.log(dat[0]);
       const daa = dat[0];
       await signIn("credentials", {
         ...daa,
@@ -56,7 +62,6 @@ export function UserAuthForm({ ...props }: UserAuthFormProps) {
       });
     }
     setIsLoading(false);
-
   }
 
   return (
