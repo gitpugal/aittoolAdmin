@@ -53,7 +53,9 @@ export default function Home() {
 
   function fetchData() {
     const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
+    const categorytoolRes = fetch(
+      "https://admin.aitoolsnext.com/api/categoryTools"
+    );
     const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
@@ -97,10 +99,15 @@ export default function Home() {
   function updateTools() {
     setIsUpdating(true);
     console.log(dialogData);
-    const res = fetch(`https://admin.aitoolsnext.com/api/${isActive == "1"?"updateCategory" :"updateTool"}`, {
-      method: "POST",
-      body: JSON.stringify(dialogData),
-    });
+    const res = fetch(
+      `https://admin.aitoolsnext.com/api/${
+        isActive == "1" ? "updateCategory" : "updateTool"
+      }`,
+      {
+        method: "POST",
+        body: JSON.stringify(dialogData),
+      }
+    );
     res.then((dat) => {
       console.log(dat.status);
       setIsUpdating(false);
@@ -114,10 +121,15 @@ export default function Home() {
 
   function deleteTool(id) {
     setIsUpdating(true);
-    const res = fetch(`https://admin.aitoolsnext.com/api/${isActive == "1" ? "deleteCategory" :"deleteTool"}`, {
-      method: "POST",
-      body: JSON.stringify({ id: id }),
-    });
+    const res = fetch(
+      `https://admin.aitoolsnext.com/api/${
+        isActive == "1" ? "deleteCategory" : "deleteTool"
+      }`,
+      {
+        method: "POST",
+        body: JSON.stringify({ id: id }),
+      }
+    );
     res.then((dat) => {
       console.log(dat.status);
       setIsUpdating(false);
@@ -133,7 +145,14 @@ export default function Home() {
       {/* navbar */}
       <div className="w-screen bg-white px-10 absolute flex flex-row items-center justify-between top-0  p-2 border-b-2 bor">
         <h1 className="text-bold text-xl">AIToolsNext</h1>
-        <Button onClick={() => router.push("/dashboard")}>Logout</Button>
+        <Button
+          onClick={() => {
+            signOut();
+            router.push("/login");
+          }}
+        >
+          Logout
+        </Button>
       </div>
 
       {/* edit dialog */}
@@ -192,8 +211,9 @@ export default function Home() {
                       {dialogData.primarycategory}
                     </option>
                     {categories.map((cat, index) => (
-
-                      <option key={cat.name+""+index} value={cat.name}>{cat.name}</option>
+                      <option key={cat.name + "" + index} value={cat.name}>
+                        {cat.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -216,7 +236,14 @@ export default function Home() {
                 <div className="grid grid-cols-3">
                   {tools.map((el) => {
                     if (el.id == dialogData.id) {
-                      return <p key={el.id+""+el.name} className="bg-slate-100 w-fit px-3 py-2 rounded-lg">{el.name}</p>;
+                      return (
+                        <p
+                          key={el.id + "" + el.name}
+                          className="bg-slate-100 w-fit px-3 py-2 rounded-lg"
+                        >
+                          {el.name}
+                        </p>
+                      );
                     }
                   })}
                 </div>

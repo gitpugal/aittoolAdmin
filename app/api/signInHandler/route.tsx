@@ -14,7 +14,7 @@ export async function POST(req: Request, res: Response) {
   try {
     
     const result = await db.any(
-      "SELECT * FROM users WHERE email = $1 LIMIT 1",
+      "SELECT * FROM admin WHERE email = $1 LIMIT 1",
       [formData.email]
     );
     // const ee=  await db.any(

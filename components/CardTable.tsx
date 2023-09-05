@@ -10,6 +10,7 @@ import {
 } from "./ui/table";
 import { Eye, PencilIcon } from "lucide-react";
 import { Trash } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export function TableDemo(props) {
@@ -71,9 +72,11 @@ export function TableDemo(props) {
                   <Trash color="red" />
                 )}
               </TableCell>
-              <TableCell>
-                <Eye color="gray" />
-              </TableCell>
+              <Link className="cursor-pointer" href={`/${props.isCategory ?"category" : "tool"}/${item.slug}`}>
+                <TableCell>
+                  <Eye color="gray" />
+                </TableCell>
+              </Link>
             </TableRow>
           ))}
       </TableBody>
