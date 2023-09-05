@@ -20,7 +20,7 @@ import { ArrowLeft, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const page = ({ params }: { params: { slug: string } }) => {
+function page({ params }: { params: { slug: string } }){
   const { toast } = useToast();
   const router = useRouter();
 
