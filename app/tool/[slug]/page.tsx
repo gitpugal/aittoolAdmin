@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import CardList from "@/components/CardList";
 import { TableDemo } from "@/components/CardTable";
