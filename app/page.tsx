@@ -2,6 +2,9 @@
 
 import CardList from "@/components/CardList";
 import { TableDemo } from "@/components/CardTable";
+import { categoryColumns, toolColumns } from "@/components/Columns";
+import DemoPage from "@/components/Table";
+import { DataTable } from "@/components/data-table";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +18,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -52,11 +64,9 @@ export default function Home() {
   }, [user.status]);
 
   function fetchData() {
-    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch(
-      "https://admin.aitoolsnext.com/api/categoryTools"
-    );
-    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
+    const toolRes = fetch("http://localhost:3000/api/tools");
+    const categorytoolRes = fetch("http://localhost:3000/api/categoryTools");
+    const categoryRes = fetch("http://localhost:3000/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -87,20 +97,28 @@ export default function Home() {
     setIsactive(e.target.id);
   }
   function openDialog(data) {
-    setDialogData(data);
+    console.log(data.original);
+    setDialogData(data.original);
     setIsOpen((prev) => !prev);
   }
   function changeHandler(e) {
     e.preventDefault();
-    console.log(e.target.value);
     setDialogData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+  function selectPrimaryChangeHandler(e) {
+    console.log(e);
+    setDialogData((prev) => ({ ...prev, primarycategory: e }));
+  }
+  function selectPriceChangeHandler(e) {
+    console.log(e);
+    setDialogData((prev) => ({ ...prev, pricing: e }));
   }
 
   function updateTools() {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -122,7 +140,7 @@ export default function Home() {
   function deleteTool(id) {
     setIsUpdating(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -156,6 +174,7 @@ export default function Home() {
       </div>
 
       {/* edit dialog */}
+
       {dialogData && (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
           <DialogContent className="sm:max-w-[425px]">
@@ -206,16 +225,23 @@ export default function Home() {
                   <Label htmlFor="category" className="text-right">
                     Primary category
                   </Label>
-                  <select name="primarycategpry" onCanPlay={changeHandler}>
-                    <option value={dialogData.primarycategory}>
-                      {dialogData.primarycategory}
-                    </option>
-                    {categories.map((cat, index) => (
-                      <option key={cat.name + "" + index} value={cat.name}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
+                  <Select
+                    name="primarycategpry"
+                    onValueChange={selectPrimaryChangeHandler}
+                    onOpenChange={selectPrimaryChangeHandler}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder={dialogData.primarycategory} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>{dialogData.primarycategory}</SelectLabel>
+                        {categories.map((cat, index) => (
+                          <SelectItem value={cat.name}>{cat.name}</SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
               {isActive != "1" && (
@@ -223,13 +249,21 @@ export default function Home() {
                   <Label htmlFor="price" className="text-right">
                     Price
                   </Label>
-                  <select name="pricing" onChange={changeHandler}>
-                    <option value={dialogData.pricing}>
-                      {dialogData.pricing}
-                    </option>
-                    <option value="Free">Free</option>
-                    <option value="Premium">Premium</option>
-                  </select>
+                  <Select
+                    name="pricing"
+                    onValueChange={selectPriceChangeHandler}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder={dialogData.pricing} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>{dialogData.pricing}</SelectLabel>
+                        <SelectItem value="Free">Free</SelectItem>
+                        <SelectItem value="Premium">Premium</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
               {
@@ -284,15 +318,24 @@ export default function Home() {
         </div>
 
         {/* cardlist */}
+
         <div className="w-[80%] px-10 flex flex-col items-start text-black h-full overflow-y-auto pt-10">
           <h1 className="w-full pb-20  text-center text-5xl font-light ">
             {sideBarLinks[parseInt(isActive) - 1].name}
           </h1>
-          <TableDemo
+          {/* <TableDemo
             openDialog={openDialog}
             deleteTool={deleteTool}
             isCategory={isActive == "1" ? true : false}
             data={isActive == "1" ? categories : tools}
+          /> */}
+          <DataTable
+            id={0}
+            openDialog={openDialog}
+            deleteTool={deleteTool}
+            isCategory={isActive == "1" ? true : false}
+            data={isActive == "1" ? categories : tools}
+            columns={isActive == "1" ? categoryColumns : toolColumns}
           />
         </div>
       </div>
