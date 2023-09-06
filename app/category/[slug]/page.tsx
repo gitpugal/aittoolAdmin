@@ -37,14 +37,14 @@ export default function Category({ params }: { params: { slug: string } }) {
   const [isAddToolOpen, setisAddToolOpen] = useState(true);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
-    const toolRes = fetch("http://localhost:3000/api/tools");
+    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
     toolRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setTools(res.tools);
       });
     });
-    const tool = fetch("http://localhost:3000/api/getCategory", {
+    const tool = fetch("https://admin.aitoolsnext.com/api/getCategory", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -54,7 +54,7 @@ export default function Category({ params }: { params: { slug: string } }) {
       setTool(dataTool);
       setDialogData(dataTool);
     });
-    const categoryRes = fetch("http://localhost:3000/api/categories");
+    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -81,7 +81,7 @@ export default function Category({ params }: { params: { slug: string } }) {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `http://localhost:3000/api/${
+      `https://admin.aitoolsnext.com/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -102,7 +102,7 @@ export default function Category({ params }: { params: { slug: string } }) {
 
   function addTools2Category() {
     setIsUpdating(true);
-    const res = fetch(`http://localhost:3000/api/addTool2Category`, {
+    const res = fetch(`https://admin.aitoolsnext.com/api/addTool2Category`, {
       method: "POST",
       body: JSON.stringify({ id: tool.id, tools: selectedTools }),
     });
@@ -122,7 +122,7 @@ export default function Category({ params }: { params: { slug: string } }) {
   function deleteTool(id) {
     setDeleting(true);
     const res = fetch(
-      `http://localhost:3000/api/${
+      `https://admin.aitoolsnext.com/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -143,16 +143,16 @@ export default function Category({ params }: { params: { slug: string } }) {
   }
 
   function fetchData() {
-    const toolRes = fetch("http://localhost:3000/api/tools");
-    const categorytoolRes = fetch("http://localhost:3000/api/categoryTools");
-    const categoryRes = fetch("http://localhost:3000/api/categories");
+    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
+    const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
+    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setCategories(res.categories);
       });
     });
-    const tools = fetch("http://localhost:3000/api/getCategory", {
+    const tools = fetch("https://admin.aitoolsnext.com/api/getCategory", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });

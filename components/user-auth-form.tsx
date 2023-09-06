@@ -57,7 +57,7 @@ export function UserAuthForm({ ...props }: UserAuthFormProps) {
       const daa = dat[0];
       await signIn("credentials", {
         ...daa,
-        callbackUrl: "http://localhost:3000/",
+        callbackUrl: "https://admin.aitoolsnext.com/",
       });
     }
     setIsLoading(false);
