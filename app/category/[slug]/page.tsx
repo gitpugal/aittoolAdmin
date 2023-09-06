@@ -176,7 +176,7 @@ export default function Category({ params }: { params: { slug: string } }) {
       </button>
       {tool ? (
         <div className="w-full h-full">
-         {tool &&  <Dialog
+         {tools &&  <Dialog
             open={isAddToolOpen}
             onOpenChange={() => setisAddToolOpen(false)}
           >
@@ -210,7 +210,13 @@ export default function Category({ params }: { params: { slug: string } }) {
                               );
                               setSelectedTools(newArray);
                             } else {
-                              setSelectedTools((prev) => [...prev, el.id]);
+                              setSelectedTools(prev => {
+                                if(prev){
+                                  return [...prev, el.id]
+                                }else{
+                                  return [el.id]
+                                }
+                              });
                             }
                           }}
                         >
