@@ -34,7 +34,7 @@ export default function Category({ params }: { params: { slug: string } }) {
   const [isDeleting, setDeleting] = useState(false);
   const [tools, setTools] = useState(null);
   const [noTools, setNoTools] = useState(true);
-  const [isAddToolOpen, setisAddToolOpen] = useState(true);
+  const [isAddToolOpen, setisAddToolOpen] = useState(false);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
     const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");

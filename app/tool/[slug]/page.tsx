@@ -32,7 +32,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   const [categories, setCategories] = useState(null);
   const [isDeleting, setDeleting] = useState(false);
 
-  const [isAddToolOpen, setisAddToolOpen] = useState(true);
+  const [isAddToolOpen, setisAddToolOpen] = useState(false);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
     const tools = fetch("https://admin.aitoolsnext.com/api/getTool", {
