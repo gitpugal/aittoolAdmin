@@ -176,7 +176,7 @@ export default function Category({ params }: { params: { slug: string } }) {
       </button>
       {tool ? (
         <div className="w-full h-full">
-          <Dialog
+         {tool &&  <Dialog
             open={isAddToolOpen}
             onOpenChange={() => setisAddToolOpen(false)}
           >
@@ -238,7 +238,7 @@ export default function Category({ params }: { params: { slug: string } }) {
                 </Button>
               </DialogFooter>
             </DialogContent>
-          </Dialog>
+          </Dialog>}
           {dialogData && (
             <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
               <DialogContent className="sm:max-w-[425px]">
@@ -336,7 +336,11 @@ export default function Category({ params }: { params: { slug: string } }) {
               <div className="grid w-fit gap-5 grid-cols-3">
                 {tools &&
                   tools.map((el) => {
-                    if (tool.tools && tool.tools.length > 0 && tool.tools.includes(el.id)) {
+                    if (
+                      tool.tools &&
+                      tool.tools.length > 0 &&
+                      tool.tools.includes(el.id)
+                    ) {
                       return (
                         <p
                           key={el.id + "" + el.name}
