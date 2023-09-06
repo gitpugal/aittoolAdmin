@@ -144,7 +144,9 @@ export default function Category({ params }: { params: { slug: string } }) {
 
   function fetchData() {
     const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
+    const categorytoolRes = fetch(
+      "https://admin.aitoolsnext.com/api/categoryTools"
+    );
     const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
@@ -191,12 +193,18 @@ export default function Category({ params }: { params: { slug: string } }) {
                         <p
                           key={el.id + "" + el.name}
                           className={`${
+                            selectedTools &&
+                            selectedTools.length > 0 &&
                             selectedTools.includes(el.id)
                               ? "bg-black text-white "
                               : "bg-slate-100"
                           } w-fit px-3 py-2 rounded-lg`}
                           onClick={() => {
-                            if (selectedTools.includes(el.id)) {
+                            if (
+                              selectedTools &&
+                              selectedTools.length > 0 &&
+                              selectedTools.includes(el.id)
+                            ) {
                               const newArray = selectedTools.filter(
                                 (it) => it != el.id
                               );
@@ -328,7 +336,7 @@ export default function Category({ params }: { params: { slug: string } }) {
               <div className="grid w-fit gap-5 grid-cols-3">
                 {tools &&
                   tools.map((el) => {
-                    if (tool.tools && tool.tools.includes(el.id)) {
+                    if (tool.tools && tool.tools.length > 0 && tool.tools.includes(el.id)) {
                       return (
                         <p
                           key={el.id + "" + el.name}

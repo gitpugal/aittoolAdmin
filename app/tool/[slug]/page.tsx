@@ -31,7 +31,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   const [isActive, setIsactive] = useState("1");
   const [categories, setCategories] = useState(null);
   const [isDeleting, setDeleting] = useState(false);
-  
+
   const [isAddToolOpen, setisAddToolOpen] = useState(true);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
@@ -86,10 +86,10 @@ export default function Tool({ params }: { params: { slug: string } }) {
     });
   }
   useEffect(() => {
-    if(tool && tool.secondarycategories){
-      setSelectedTools(tool.secondarycategories)
+    if (tool && tool.secondarycategories) {
+      setSelectedTools(tool.secondarycategories);
     }
-  }, [tool])
+  }, [tool]);
 
   function deleteTool(id) {
     setDeleting(true);
@@ -132,10 +132,11 @@ export default function Tool({ params }: { params: { slug: string } }) {
     setIsUpdating(false);
   }
 
-
   function fetchData() {
     const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
+    const categorytoolRes = fetch(
+      "https://admin.aitoolsnext.com/api/categoryTools"
+    );
     const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
@@ -176,31 +177,37 @@ export default function Tool({ params }: { params: { slug: string } }) {
               <div className="w-full flex flex-row flex-wrap gap-2">
                 {categories &&
                   categories.map((el) => {
-                      return (
-                        <p
-                          key={el.id + "" + el.name}
-                          className={`${
+                    return (
+                      <p
+                        key={el.id + "" + el.name}
+                        className={`${
+                          selectedTools &&
+                          selectedTools.length > 0 &&
+                          selectedTools.includes(el.name)
+                            ? "bg-black text-white "
+                            : "bg-slate-100"
+                        } w-fit px-3 py-2 rounded-lg`}
+                        onClick={() => {
+                          if (
+                            selectedTools &&
+                            selectedTools.length > 0 &&
                             selectedTools.includes(el.name)
-                              ? "bg-black text-white "
-                              : "bg-slate-100"
-                          } w-fit px-3 py-2 rounded-lg`}
-                          onClick={() => {
-                            if (selectedTools.includes(el.name)) {
-                              const newArray = selectedTools.filter(
-                                (it) => it != el.name
-                              );
-                              setSelectedTools(newArray);
-                            } else {
-                              setSelectedTools((prev) => [...prev, el.name]);
-                            }
-                          }}
-                        >
-                          {el.name}
-                          <span className="text-2xl ml-2 font-light inline">
-                            +
-                          </span>
-                        </p>
-                      );
+                          ) {
+                            const newArray = selectedTools.filter(
+                              (it) => it != el.name
+                            );
+                            setSelectedTools(newArray);
+                          } else {
+                            setSelectedTools((prev) => [...prev, el.name]);
+                          }
+                        }}
+                      >
+                        {el.name}
+                        <span className="text-2xl ml-2 font-light inline">
+                          +
+                        </span>
+                      </p>
+                    );
                   })}
               </div>
               <DialogFooter>
@@ -330,7 +337,9 @@ export default function Tool({ params }: { params: { slug: string } }) {
                     </p>
                   ))}
               </div>
-              <Button onClick={() => setisAddToolOpen(true)} className="w-fit">Add Category</Button>
+              <Button onClick={() => setisAddToolOpen(true)} className="w-fit">
+                Add Category
+              </Button>
               <div className="flex flex-row gap-5 items-center justify-center w-fit">
                 <Button
                   onClick={() => setIsOpen(true)}
