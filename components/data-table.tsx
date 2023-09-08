@@ -93,7 +93,7 @@ export function DataTable<TData extends MyData, TValue>({
                 >
                   <PencilIcon color="gray" />
                 </TableCell>
-                <TableCell
+                {/* <TableCell
                   className="cursor-pointer"
                   onClick={() => {
                     if (row.original.id != deletingId) {
@@ -107,7 +107,7 @@ export function DataTable<TData extends MyData, TValue>({
                   ) : (
                     <Trash color="red" />
                   )}
-                </TableCell>
+                </TableCell> */}
                 <Link
                   className="cursor-pointer"
                   href={`/${isCategory ? "category" : "tool"}/${

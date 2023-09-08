@@ -20,6 +20,9 @@ import { Trash } from "lucide-react";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import ReactQuill from "react-quill";
+import 'react-quill/dist/quill.snow.css';
+
 
 export default function Category({ params }: { params: { slug: string } }) {
   const { toast } = useToast();
@@ -37,14 +40,14 @@ export default function Category({ params }: { params: { slug: string } }) {
   const [isAddToolOpen, setisAddToolOpen] = useState(false);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
-    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
+    const toolRes = fetch("http://localhost:3000/api/tools");
     toolRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setTools(res.tools);
       });
     });
-    const tool = fetch("https://admin.aitoolsnext.com/api/getCategory", {
+    const tool = fetch("http://localhost:3000/api/getCategory", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -54,7 +57,7 @@ export default function Category({ params }: { params: { slug: string } }) {
       setTool(dataTool);
       setDialogData(dataTool);
     });
-    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
+    const categoryRes = fetch("http://localhost:3000/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -81,8 +84,7 @@ export default function Category({ params }: { params: { slug: string } }) {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
-        isActive == "1" ? "updateCategory" : "updateTool"
+      `http://localhost:3000/api/${isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
         method: "POST",
@@ -102,7 +104,7 @@ export default function Category({ params }: { params: { slug: string } }) {
 
   function addTools2Category() {
     setIsUpdating(true);
-    const res = fetch(`https://admin.aitoolsnext.com/api/addTool2Category`, {
+    const res = fetch(`http://localhost:3000/api/addTool2Category`, {
       method: "POST",
       body: JSON.stringify({ id: tool.id, tools: selectedTools }),
     });
@@ -122,8 +124,7 @@ export default function Category({ params }: { params: { slug: string } }) {
   function deleteTool(id) {
     setDeleting(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
-        isActive == "1" ? "deleteCategory" : "deleteTool"
+      `http://localhost:3000/api/${isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
         method: "POST",
@@ -143,18 +144,18 @@ export default function Category({ params }: { params: { slug: string } }) {
   }
 
   function fetchData() {
-    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
+    const toolRes = fetch("http://localhost:3000/api/tools");
     const categorytoolRes = fetch(
-      "https://admin.aitoolsnext.com/api/categoryTools"
+      "http://localhost:3000/api/categoryTools"
     );
-    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
+    const categoryRes = fetch("http://localhost:3000/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setCategories(res.categories);
       });
     });
-    const tools = fetch("https://admin.aitoolsnext.com/api/getCategory", {
+    const tools = fetch("http://localhost:3000/api/getCategory", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -164,6 +165,22 @@ export default function Category({ params }: { params: { slug: string } }) {
       setTool(dataTool);
       setDialogData(dataTool);
     });
+  }
+  async function goToTool(id) {
+    const toolRes = await fetch("http://localhost:3000/api/getToolByID", {
+      method: 'POST',
+      body: JSON.stringify({ id: id })
+    });
+    // const data = await tool;
+    const res = await toolRes.json();
+    if (res.tools != null && res.tools.slug != null) {
+      router.push(`/tool/${res.tools.slug}`);
+    }
+  }
+  function quilChangeHandler(val) {
+    // e.preventDefault();
+    setDialogData((prev) => ({ ...prev, description: val }));
+
   }
   return (
     <div className="p-20 flex relative items-center justify-center  h-screen">
@@ -176,7 +193,7 @@ export default function Category({ params }: { params: { slug: string } }) {
       </button>
       {tool ? (
         <div className="w-full h-full">
-         {tools &&  <Dialog
+          {tools && <Dialog
             open={isAddToolOpen}
             onOpenChange={() => setisAddToolOpen(false)}
           >
@@ -192,13 +209,12 @@ export default function Category({ params }: { params: { slug: string } }) {
                       return (
                         <p
                           key={el.id + "" + el.name}
-                          className={`${
-                            selectedTools &&
+                          className={`${selectedTools &&
                             selectedTools.length > 0 &&
                             selectedTools.includes(el.id)
-                              ? "bg-black text-white "
-                              : "bg-slate-100"
-                          } w-fit px-3 py-2 rounded-lg`}
+                            ? "bg-black text-white "
+                            : "bg-slate-100"
+                            } w-fit px-3 py-2 cursor-pointer rounded-lg`}
                           onClick={() => {
                             if (
                               selectedTools &&
@@ -211,9 +227,9 @@ export default function Category({ params }: { params: { slug: string } }) {
                               setSelectedTools(newArray);
                             } else {
                               setSelectedTools(prev => {
-                                if(prev){
+                                if (prev) {
                                   return [...prev, el.id]
-                                }else{
+                                } else {
                                   return [el.id]
                                 }
                               });
@@ -232,9 +248,8 @@ export default function Category({ params }: { params: { slug: string } }) {
               </div>
               <DialogFooter>
                 <Button
-                  className={`${
-                    isUpdating && " pointer-events-none opacity-75 "
-                  }`}
+                  className={`${isUpdating && " pointer-events-none opacity-75 "
+                    }`}
                   onClick={addTools2Category}
                 >
                   {isUpdating && (
@@ -270,13 +285,15 @@ export default function Category({ params }: { params: { slug: string } }) {
                     <Label htmlFor="description" className="text-right">
                       Description
                     </Label>
-                    <Input
+                    <ReactQuill className="col-span-3" theme="snow" onChange={quilChangeHandler} value={dialogData.description} />
+
+                    {/* <Input
                       onChange={changeHandler}
                       id="description"
                       name="description"
                       value={dialogData.description}
                       className="col-span-3"
-                    />
+                    /> */}
                   </div>
                   {isActive != "1" && (
                     <div className="grid grid-cols-4 items-center gap-4">
@@ -316,9 +333,8 @@ export default function Category({ params }: { params: { slug: string } }) {
                 </div>
                 <DialogFooter>
                   <Button
-                    className={`${
-                      isUpdating && " pointer-events-none opacity-75 "
-                    }`}
+                    className={`${isUpdating && " pointer-events-none opacity-75 "
+                      }`}
                     onClick={updateTools}
                   >
                     {isUpdating && (
@@ -349,8 +365,9 @@ export default function Category({ params }: { params: { slug: string } }) {
                     ) {
                       return (
                         <p
+                          onClick={() => goToTool(el.id)}
                           key={el.id + "" + el.name}
-                          className="bg-slate-100 w-fit px-3 py-2 rounded-lg"
+                          className="bg-slate-100 cursor-pointer w-fit px-3 py-2 rounded-lg"
                         >
                           {el.name}
                         </p>
