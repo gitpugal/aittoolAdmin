@@ -64,9 +64,9 @@ export default function Home() {
   }, [user.status]);
 
   function fetchData() {
-    const toolRes = fetch("http://localhost:3000/api/tools");
-    const categorytoolRes = fetch("http://localhost:3000/api/categoryTools");
-    const categoryRes = fetch("http://localhost:3000/api/categories");
+    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
+    const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
+    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -118,7 +118,7 @@ export default function Home() {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `http://localhost:3000/api/${
+      `https://admin.aitoolsnext.com/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -140,7 +140,7 @@ export default function Home() {
   function deleteTool(id) {
     setIsUpdating(true);
     const res = fetch(
-      `http://localhost:3000/api/${
+      `https://admin.aitoolsnext.com/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
