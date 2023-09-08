@@ -7,6 +7,7 @@ export async function POST(re: Request, res: Request) {
     const { id, tools } = await new Response(re.body).json();
     const categories = await db
       .none("UPDATE categories SET tools = $1 where id = $2", [tools, id])
+      console.log(tools, id);
      
     return new Response(JSON.stringify("added sucessfully"), {
       status: 200,
