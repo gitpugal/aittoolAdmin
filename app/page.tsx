@@ -198,9 +198,9 @@ export default function Home() {
       toast({
         title: "Tool updated successfully!",
       });
-      fetchData();
       setIsOpen(false);
     });
+    fetchData();
     setisAddToolOpen(false);
     setIsUpdating(false);
     setSelectedTools([]);
