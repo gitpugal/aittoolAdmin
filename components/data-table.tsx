@@ -54,9 +54,7 @@ export function DataTable<TData extends MyData, TValue>({
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-                <TableHead key={"id"}>
-                    ID
-                  </TableHead>
+              <TableHead key={"id"}>ID</TableHead>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
@@ -79,10 +77,15 @@ export function DataTable<TData extends MyData, TValue>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
-                <TableCell>{index+1}</TableCell>
+                <TableCell>{index + 1}</TableCell>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  <TableCell
+                    key={cell.id}
+                    dangerouslySetInnerHTML={{
+                      __html: cell.renderValue()?.toString(),
+                    }}
+                  >
+                    {/* {cell.renderValue().toString()} */}
                   </TableCell>
                 ))}
                 <TableCell

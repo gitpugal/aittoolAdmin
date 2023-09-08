@@ -27,7 +27,7 @@ export const toolColumns: ColumnDef<Payment>[] = [
     header: "Slug",
   },
   {
-    accessorKey: "category",
+    accessorKey: "primarycategory",
     header: "Category",
   },
   {

@@ -31,6 +31,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 export default function Home() {
   const { toast } = useToast();
@@ -43,6 +45,9 @@ export default function Home() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isActive, setIsactive] = useState("1");
   const [categoryTools, setCategoryTools] = useState([]);
+  const [selectedTools, setSelectedTools] = useState([]);
+  const [isAddToolOpen, setisAddToolOpen] = useState(false);
+
   const sideBarLinks = [
     {
       id: 1,
@@ -62,11 +67,14 @@ export default function Home() {
       router.push("/login");
     }
   }, [user.status]);
+  function renderHTML(htmlString) {
+    return { __html: htmlString };
+  }
 
   function fetchData() {
-    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
-    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
+    const toolRes = fetch("http://localhost:3000/api/tools");
+    const categorytoolRes = fetch("http://localhost:3000/api/categoryTools");
+    const categoryRes = fetch("http://localhost:3000/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -113,12 +121,16 @@ export default function Home() {
     console.log(e);
     setDialogData((prev) => ({ ...prev, pricing: e }));
   }
+  function quilChangeHandler(val) {
+    // e.preventDefault();
+    setDialogData((prev) => ({ ...prev, description: val }));
+  }
 
   function updateTools() {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -140,7 +152,7 @@ export default function Home() {
   function deleteTool(id) {
     setIsUpdating(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -158,6 +170,37 @@ export default function Home() {
       fetchData();
     });
   }
+
+  function addTools2Category(tool) {
+    setIsUpdating(true);
+    const newArraya = [...selectedTools];
+    console.log(newArraya)
+    // console.log(tool)
+    dialogData?.secondarycategories?.map((el) => {
+      if (!newArraya.includes(el)) {
+        newArraya.push(el);
+      }
+    });
+    // console.log(newArraya)
+    // setSelectedTools((prev) => [...prev, ...tool?.secondarycategories]);
+    const res = fetch(`http://localhost:3000/api/addCategory2Tool`, {
+      method: "POST",
+      body: JSON.stringify({ id: tool, tools: newArraya }),
+    });
+    res.then((dat) => {
+      console.log(dat.status);
+      setIsUpdating(false);
+      setisAddToolOpen(false);
+      toast({
+        title: "Tool updated successfully!",
+      });
+      fetchData();
+      setIsOpen(false);
+    });
+    setisAddToolOpen(false);
+    setIsUpdating(false);
+  }
+
   return (
     <div className="pt-12  flex flex-col  h-screen w-full items-center justify-start text-black">
       {/* navbar */}
@@ -200,12 +243,11 @@ export default function Home() {
                 <Label htmlFor="description" className="text-right">
                   Description
                 </Label>
-                <Input
-                  onChange={changeHandler}
-                  id="description"
-                  name="description"
-                  value={dialogData.description}
+                <ReactQuill
                   className="col-span-3"
+                  theme="snow"
+                  onChange={quilChangeHandler}
+                  value={dialogData.description}
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -266,24 +308,91 @@ export default function Home() {
                   </Select>
                 </div>
               )}
-              {
-                <div className="grid grid-cols-3">
-                  {tools.map((el) => {
-                    if (el.id == dialogData.id) {
-                      return (
-                        <p
-                          key={el.id + "" + el.name}
-                          className="bg-slate-100 w-fit px-3 py-2 rounded-lg"
-                        >
-                          {el.name}
-                        </p>
-                      );
-                    }
-                  })}
+
+              {isActive != "1" && (
+                <div className="grid grid-cols-3 gap-1">
+                  {dialogData?.secondarycategories?.map((el) => (
+                    <p
+                      key={el}
+                      className={`bg-slate-100 w-fit px-3 cursor-pointer py-2 rounded-lg`}
+                    >
+                      {el}
+                      <span className="text-2xl ml-2 font-light inline">+</span>
+                    </p>
+                  ))}
                 </div>
-              }
+              )}
+              <Dialog
+                open={isAddToolOpen}
+                onOpenChange={() => setisAddToolOpen(false)}
+              >
+                <DialogContent className="">
+                  <DialogHeader>
+                    <DialogTitle>Add Tools</DialogTitle>
+                  </DialogHeader>
+                  <div className="w-full flex flex-row flex-wrap gap-2">
+                    {categories &&
+                      categories.map((el) => {
+                        return (
+                          <p
+                            key={el.id + "" + el.name}
+                            className={`${
+                              (selectedTools &&
+                                selectedTools.length > 0 &&
+                                selectedTools.includes(el.name)) ||
+                              dialogData?.secondarycategories?.includes(el.name)
+                                ? "bg-black text-white "
+                                : "bg-slate-100"
+                            } w-fit px-3 cursor-pointer py-2 rounded-lg`}
+                            onClick={() => {
+                              if (
+                                selectedTools &&
+                                selectedTools.length > 0 &&
+                                selectedTools.includes(el.name)
+                              ) {
+                                const newArray = selectedTools.filter(
+                                  (it) => it != el.name
+                                );
+                                setSelectedTools(newArray);
+                              } else {
+                                setSelectedTools((prev) => [...prev, el.name]);
+                              }
+                            }}
+                          >
+                            {el.name}
+                            <span className="text-2xl ml-2 font-light inline">
+                              +
+                            </span>
+                          </p>
+                        );
+                      })}
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      className={`${
+                        isUpdating && " pointer-events-none opacity-75 "
+                      }`}
+                      onClick={() => addTools2Category(dialogData.id)}
+                    >
+                      {isUpdating && (
+                        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Add Tools
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
+
             <DialogFooter>
+              {isActive != "1" && (
+                <Button
+                  onClick={() => setisAddToolOpen(true)}
+                  className="w-fit"
+                >
+                  Add Category
+                </Button>
+              )}
               <Button
                 className={`${
                   isUpdating && " pointer-events-none opacity-75 "
