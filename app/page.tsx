@@ -75,7 +75,9 @@ export default function Home() {
 
   function fetchData() {
     const toolRes = fetch("https://aiadmin.vercel.app/api/tools");
-    const categorytoolRes = fetch("https://aiadmin.vercel.app/api/categoryTools");
+    const categorytoolRes = fetch(
+      "https://aiadmin.vercel.app/api/categoryTools"
+    );
     const categoryRes = fetch("https://aiadmin.vercel.app/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();

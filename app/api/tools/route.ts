@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 // Adjust the path as needed
 export  async function GET(re: Request, res: Request) {
   try {
-    const tools = await db.any("SELECT * FROM tools");
+    const tools = await db.many("SELECT * FROM tools");
     return new Response(JSON.stringify({tools: tools}), {
       status: 200,
 
