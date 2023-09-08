@@ -29,10 +29,12 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { signOut, useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function Home() {
   const { toast } = useToast();
@@ -67,14 +69,14 @@ export default function Home() {
       router.push("/login");
     }
   }, [user.status]);
-  function renderHTML(htmlString) {
-    return { __html: htmlString };
-  }
+  // function renderHTML(htmlString) {
+  //   return { __html: htmlString };
+  // }
 
   function fetchData() {
-    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
-    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
+    const toolRes = fetch("http://localhost:3000/api/tools");
+    const categorytoolRes = fetch("http://localhost:3000/api/categoryTools");
+    const categoryRes = fetch("http://localhost:3000/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -130,7 +132,7 @@ export default function Home() {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -152,7 +154,7 @@ export default function Home() {
   function deleteTool(id) {
     setIsUpdating(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -174,7 +176,7 @@ export default function Home() {
   function addTools2Category(tool) {
     setIsUpdating(true);
     const newArraya = [...selectedTools];
-    console.log(newArraya)
+    console.log(newArraya);
     // console.log(tool)
     dialogData?.secondarycategories?.map((el) => {
       if (!newArraya.includes(el)) {
@@ -183,7 +185,7 @@ export default function Home() {
     });
     // console.log(newArraya)
     // setSelectedTools((prev) => [...prev, ...tool?.secondarycategories]);
-    const res = fetch(`https://admin.aitoolsnext.com/api/addCategory2Tool`, {
+    const res = fetch(`http://localhost:3000/api/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool, tools: newArraya }),
     });

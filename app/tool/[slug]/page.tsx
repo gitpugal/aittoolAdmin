@@ -17,12 +17,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft, Trash } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import "react-quill/dist/quill.snow.css";
 
-
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 export default function Tool({ params }: { params: { slug: string } }) {
   const { toast } = useToast();
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   const [isAddToolOpen, setisAddToolOpen] = useState(false);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
-    const tools = fetch("https://admin.aitoolsnext.com/api/getTool", {
+    const tools = fetch("http://localhost:3000/api/getTool", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -48,7 +48,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
       setTool(dataTool);
       setDialogData(dataTool);
     });
-    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
+    const categoryRes = fetch("http://localhost:3000/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -70,7 +70,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -97,7 +97,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   function deleteTool(id) {
     setDeleting(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -118,7 +118,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   }
   function addTools2Category() {
     setIsUpdating(true);
-    const res = fetch(`https://admin.aitoolsnext.com/api/addCategory2Tool`, {
+    const res = fetch(`http://localhost:3000/api/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool.id, tools: selectedTools }),
     });
@@ -136,18 +136,16 @@ export default function Tool({ params }: { params: { slug: string } }) {
   }
 
   function fetchData() {
-    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch(
-      "https://admin.aitoolsnext.com/api/categoryTools"
-    );
-    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
+    const toolRes = fetch("http://localhost:3000/api/tools");
+    const categorytoolRes = fetch("http://localhost:3000/api/categoryTools");
+    const categoryRes = fetch("http://localhost:3000/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setCategories(res.categories);
       });
     });
-    const tools = fetch("https://admin.aitoolsnext.com/api/getTool", {
+    const tools = fetch("http://localhost:3000/api/getTool", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -158,10 +156,9 @@ export default function Tool({ params }: { params: { slug: string } }) {
       setDialogData(dataTool);
     });
   }
-  function quilChangeHandler(val){
+  function quilChangeHandler(val) {
     // e.preventDefault();
-    setDialogData((prev) => ({ ...prev, description:  val}));
-
+    setDialogData((prev) => ({ ...prev, description: val }));
   }
   return (
     <div className="p-10 flex items-center justify-center  h-screen">
@@ -258,7 +255,12 @@ export default function Tool({ params }: { params: { slug: string } }) {
                     <Label htmlFor="description" className="text-right">
                       Description
                     </Label>
-                    <ReactQuill className="col-span-3" theme="snow" onChange={quilChangeHandler} value={dialogData.description}/>
+                    <ReactQuill
+                      className="col-span-3"
+                      theme="snow"
+                      onChange={quilChangeHandler}
+                      value={dialogData.description}
+                    />
                     {/* <Input
                       onChange={changeHandler}
                       id="description"
@@ -324,7 +326,10 @@ export default function Tool({ params }: { params: { slug: string } }) {
               <h1 className="text-5xl font-bold ">{tool.name}</h1>
               <p className="text-3xl font-semibold">
                 Description:
-                <p className="text-3xl ml-5  font-light" dangerouslySetInnerHTML={{__html: tool.description}}/>
+                <p
+                  className="text-3xl ml-5  font-light"
+                  dangerouslySetInnerHTML={{ __html: tool.description }}
+                />
               </p>
               <p className="text-3xl font-semibold">
                 Pricing:
