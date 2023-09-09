@@ -57,7 +57,7 @@ export function UserAuthForm({ ...props }: UserAuthFormProps) {
       const daa = dat[0];
       await signIn("credentials", {
         ...daa,
-        callbackUrl: "https://aiadmin.vercel.app/",
+        callbackUrl: "http://localhost:3000/",
       });
     }
     setIsLoading(false);
