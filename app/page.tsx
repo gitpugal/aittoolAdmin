@@ -79,6 +79,7 @@ export default function Home() {
       `https://aiadmin.vercel.app/api/tools?timestamp=${timestamp}`,
       {
         cache: "no-cache",
+        method: "POST"
       }
     );
     const categorytoolRes = await fetch(
