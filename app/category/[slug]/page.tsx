@@ -42,14 +42,14 @@ export default function Category({ params }: { params: { slug: string } }) {
   const [isAddToolOpen, setisAddToolOpen] = useState(false);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
-    const toolRes = fetch("https://aiadmin.vercel.app/api/tools");
+    const toolRes = fetch("http://localhost:3000/api/tools");
     toolRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setTools(res.tools);
       });
     });
-    const tool = fetch("https://aiadmin.vercel.app/api/getCategory", {
+    const tool = fetch("http://localhost:3000/api/getCategory", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -59,7 +59,7 @@ export default function Category({ params }: { params: { slug: string } }) {
       setTool(dataTool);
       setDialogData(dataTool);
     });
-    const categoryRes = fetch("https://aiadmin.vercel.app/api/categories");
+    const categoryRes = fetch("http://localhost:3000/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -86,7 +86,7 @@ export default function Category({ params }: { params: { slug: string } }) {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://aiadmin.vercel.app/api/${isActive == "1" ? "updateCategory" : "updateTool"
+      `http://localhost:3000/api/${isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
         method: "POST",
@@ -106,7 +106,7 @@ export default function Category({ params }: { params: { slug: string } }) {
 
   function addTools2Category() {
     setIsUpdating(true);
-    const res = fetch(`https://aiadmin.vercel.app/api/addTool2Category`, {
+    const res = fetch(`http://localhost:3000/api/addTool2Category`, {
       method: "POST",
       body: JSON.stringify({ id: tool.id, tools: selectedTools }),
     });
@@ -126,7 +126,7 @@ export default function Category({ params }: { params: { slug: string } }) {
   function deleteTool(id) {
     setDeleting(true);
     const res = fetch(
-      `https://aiadmin.vercel.app/api/${isActive == "1" ? "deleteCategory" : "deleteTool"
+      `http://localhost:3000/api/${isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
         method: "POST",
@@ -146,18 +146,18 @@ export default function Category({ params }: { params: { slug: string } }) {
   }
 
   function fetchData() {
-    const toolRes = fetch("https://aiadmin.vercel.app/api/tools");
+    const toolRes = fetch("http://localhost:3000/api/tools");
     const categorytoolRes = fetch(
-      "https://aiadmin.vercel.app/api/categoryTools"
+      "http://localhost:3000/api/categoryTools"
     );
-    const categoryRes = fetch("https://aiadmin.vercel.app/api/categories");
+    const categoryRes = fetch("http://localhost:3000/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setCategories(res.categories);
       });
     });
-    const tools = fetch("https://aiadmin.vercel.app/api/getCategory", {
+    const tools = fetch("http://localhost:3000/api/getCategory", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -169,7 +169,7 @@ export default function Category({ params }: { params: { slug: string } }) {
     });
   }
   async function goToTool(id) {
-    const toolRes = await fetch("https://aiadmin.vercel.app/api/getToolByID", {
+    const toolRes = await fetch("http://localhost:3000/api/getToolByID", {
       method: 'POST',
       body: JSON.stringify({ id: id })
     });
