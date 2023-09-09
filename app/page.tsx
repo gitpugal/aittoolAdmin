@@ -73,34 +73,29 @@ export default function Home() {
   //   return { __html: htmlString };
   // }
 
-  function fetchData() {
-    const toolRes = fetch("https://aiadmin.vercel.app/api/tools",  {
-      cache: 'no-cache',
+  async function fetchData() {
+    const toolRes = await fetch("https://aiadmin.vercel.app/api/tools", {
+      cache: "no-cache",
     });
-    const categorytoolRes = fetch("https://aiadmin.vercel.app/api/categoryTools",  {
-      cache: 'no-cache',
-    });
-    const categoryRes = fetch("https://aiadmin.vercel.app/api/categories",  {
-      cache: 'no-cache',
-    });
-    categoryRes.then((val) => {
-      const dat = val.json();
-      dat.then((res) => {
-        setCategories(res.categories);
-      });
-    });
-    toolRes.then((val) => {
-      const dat = val.json();
-      dat.then((res) => {
-        setTools(res.tools);
-      });
-    });
-    categorytoolRes.then((val) => {
-      const dat = val.json();
-      dat.then((res) => {
-        setCategoryTools(res.tools);
-      });
-    });
+    const categorytoolRes = await fetch(
+      "https://aiadmin.vercel.app/api/categoryTools",
+      {
+        cache: "no-cache",
+      }
+    );
+    const categoryRes = await fetch(
+      "https://aiadmin.vercel.app/api/categories",
+      {
+        cache: "no-cache",
+      }
+    );
+
+    const catDat = await categoryRes.json();
+    setCategories(catDat.categories);
+    const dat = await toolRes.json();
+    setTools(dat.tools);
+    const catToolDat = await categorytoolRes.json();
+    setCategoryTools(catToolDat.tools);
   }
   useEffect(() => {
     if (user.status == "unauthenticated") {
