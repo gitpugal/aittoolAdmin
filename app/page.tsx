@@ -79,7 +79,11 @@ export default function Home() {
       `http://localhost:3000/api/tools?timestamp=${timestamp}`,
       {
         cache: "no-cache",
+<<<<<<< HEAD
         method: "POST",
+=======
+        method: "POST"
+>>>>>>> 562a9df3b11d19ffd9b128ed6af585fd0cf67390
       }
     );
     const categorytoolRes = await fetch(
