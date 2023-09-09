@@ -75,9 +75,7 @@ export default function Home() {
 
   function fetchData() {
     const toolRes = fetch("https://aiadmin.vercel.app/api/tools");
-    const categorytoolRes = fetch(
-      "https://aiadmin.vercel.app/api/categoryTools"
-    );
+    const categorytoolRes = fetch("https://aiadmin.vercel.app/api/categoryTools");
     const categoryRes = fetch("https://aiadmin.vercel.app/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
@@ -185,6 +183,7 @@ export default function Home() {
         newArraya.push(el);
       }
     });
+
     // console.log(newArraya)
     // setSelectedTools((prev) => [...prev, ...tool?.secondarycategories]);
     const res = fetch(`https://aiadmin.vercel.app/api/addCategory2Tool`, {
@@ -199,12 +198,19 @@ export default function Home() {
         title: "Tool updated successfully!",
       });
       setIsOpen(false);
+      fetchData();
     });
-    fetchData();
     setisAddToolOpen(false);
     setIsUpdating(false);
     setSelectedTools([]);
   }
+  useEffect(() => {
+    if (isOpen == true) {
+      setSelectedTools([...dialogData?.secondarycategories]);
+    } else {
+      setSelectedTools([]);
+    }
+  }, [isOpen]);
 
   return (
     <div className="pt-12  flex flex-col  h-screen w-full items-center justify-start text-black">
@@ -342,10 +348,9 @@ export default function Home() {
                           <p
                             key={el.id + "" + el.name}
                             className={`${
-                              (selectedTools &&
-                                selectedTools.length > 0 &&
-                                selectedTools.includes(el.name)) ||
-                              dialogData?.secondarycategories?.includes(el.name)
+                              selectedTools &&
+                              selectedTools.length > 0 &&
+                              selectedTools.includes(el.name)
                                 ? "bg-black text-white "
                                 : "bg-slate-100"
                             } w-fit px-3 cursor-pointer py-2 rounded-lg`}
