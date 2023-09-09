@@ -137,10 +137,10 @@ export default function Tool({ params }: { params: { slug: string } }) {
 
   function fetchData() {
     
-    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch(
-      "https://admin.aitoolsnext.com/api/categoryTools"
-    );
+    // const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
+    // const categorytoolRes = fetch(
+    //   "https://admin.aitoolsnext.com/api/categoryTools"
+    // );
     const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();

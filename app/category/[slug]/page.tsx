@@ -21,9 +21,7 @@ import { ArrowLeft } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
-import 'react-quill/dist/quill.snow.css';
-
+import "react-quill/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 export default function Category({ params }: { params: { slug: string } }) {
@@ -42,13 +40,21 @@ export default function Category({ params }: { params: { slug: string } }) {
   const [isAddToolOpen, setisAddToolOpen] = useState(false);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
-    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    toolRes.then((val) => {
-      const dat = val.json();
-      dat.then((res) => {
-        setTools(res.tools);
-      });
-    });
+    fetchInitialData();
+  }, []);
+
+  async function fetchInitialData() {
+    const timestamp = Date.now();
+
+    const toolRes = await fetch(
+      `https://admin.aitoolsnext.com/api/tools?timestamp=${timestamp}`,
+      {
+        cache: "no-cache",
+        method: "POST",
+      }
+    );
+    const dat = await toolRes.json();
+    setTools(dat.tools);
     const tool = fetch("https://admin.aitoolsnext.com/api/getCategory", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
@@ -66,7 +72,7 @@ export default function Category({ params }: { params: { slug: string } }) {
         setCategories(res.categories);
       });
     });
-  }, []);
+  }
   function openDialog(data) {
     setDialogData(data);
     setIsOpen((prev) => !prev);
@@ -86,7 +92,8 @@ export default function Category({ params }: { params: { slug: string } }) {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${isActive == "1" ? "updateCategory" : "updateTool"
+      `https://admin.aitoolsnext.com/api/${
+        isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
         method: "POST",
@@ -126,7 +133,8 @@ export default function Category({ params }: { params: { slug: string } }) {
   function deleteTool(id) {
     setDeleting(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${isActive == "1" ? "deleteCategory" : "deleteTool"
+      `https://admin.aitoolsnext.com/api/${
+        isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
         method: "POST",
@@ -146,10 +154,8 @@ export default function Category({ params }: { params: { slug: string } }) {
   }
 
   function fetchData() {
-    const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    const categorytoolRes = fetch(
-      "https://admin.aitoolsnext.com/api/categoryTools"
-    );
+    // const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
+    // const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
     const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
@@ -170,8 +176,8 @@ export default function Category({ params }: { params: { slug: string } }) {
   }
   async function goToTool(id) {
     const toolRes = await fetch("https://admin.aitoolsnext.com/api/getToolByID", {
-      method: 'POST',
-      body: JSON.stringify({ id: id })
+      method: "POST",
+      body: JSON.stringify({ id: id }),
     });
     // const data = await tool;
     const res = await toolRes.json();
@@ -182,7 +188,6 @@ export default function Category({ params }: { params: { slug: string } }) {
   function quilChangeHandler(val) {
     // e.preventDefault();
     setDialogData((prev) => ({ ...prev, description: val }));
-
   }
   return (
     <div className="p-20 flex relative items-center justify-center  h-screen">
@@ -195,73 +200,77 @@ export default function Category({ params }: { params: { slug: string } }) {
       </button>
       {tool ? (
         <div className="w-full h-full">
-          {tools && <Dialog
-            open={isAddToolOpen}
-            onOpenChange={() => setisAddToolOpen(false)}
-          >
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add Tools</DialogTitle>
-              </DialogHeader>
-              <div className="w-full flex flex-row flex-wrap gap-2">
-                {tools &&
-                  tools.map((el) => {
-                    if (el.id != tool.id) {
-                      // setNoTools(false);
-                      return (
-                        <p
-                          key={el.id + "" + el.name}
-                          className={`${selectedTools &&
-                            selectedTools.length > 0 &&
-                            selectedTools.includes(el.id)
-                            ? "bg-black text-white "
-                            : "bg-slate-100"
-                            } w-fit px-3 py-2 cursor-pointer rounded-lg`}
-                          onClick={() => {
-                            if (
+          {tools && (
+            <Dialog
+              open={isAddToolOpen}
+              onOpenChange={() => setisAddToolOpen(false)}
+            >
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Add Tools</DialogTitle>
+                </DialogHeader>
+                <div className="w-full flex flex-row flex-wrap gap-2">
+                  {tools &&
+                    tools.map((el) => {
+                      if (el.id != tool.id) {
+                        // setNoTools(false);
+                        return (
+                          <p
+                            key={el.id + "" + el.name}
+                            className={`${
                               selectedTools &&
                               selectedTools.length > 0 &&
                               selectedTools.includes(el.id)
-                            ) {
-                              const newArray = selectedTools.filter(
-                                (it) => it != el.id
-                              );
-                              setSelectedTools(newArray);
-                            } else {
-                              setSelectedTools(prev => {
-                                if (prev) {
-                                  return [...prev, el.id]
-                                } else {
-                                  return [el.id]
-                                }
-                              });
-                            }
-                          }}
-                        >
-                          {el.name}
-                          {el.id}{" "}
-                          <span className="text-2xl ml-2 font-light inline">
-                            +
-                          </span>
-                        </p>
-                      );
-                    }
-                  })}
-              </div>
-              <DialogFooter>
-                <Button
-                  className={`${isUpdating && " pointer-events-none opacity-75 "
+                                ? "bg-black text-white "
+                                : "bg-slate-100"
+                            } w-fit px-3 py-2 cursor-pointer rounded-lg`}
+                            onClick={() => {
+                              if (
+                                selectedTools &&
+                                selectedTools.length > 0 &&
+                                selectedTools.includes(el.id)
+                              ) {
+                                const newArray = selectedTools.filter(
+                                  (it) => it != el.id
+                                );
+                                setSelectedTools(newArray);
+                              } else {
+                                setSelectedTools((prev) => {
+                                  if (prev) {
+                                    return [...prev, el.id];
+                                  } else {
+                                    return [el.id];
+                                  }
+                                });
+                              }
+                            }}
+                          >
+                            {el.name}
+                            {el.id}{" "}
+                            <span className="text-2xl ml-2 font-light inline">
+                              +
+                            </span>
+                          </p>
+                        );
+                      }
+                    })}
+                </div>
+                <DialogFooter>
+                  <Button
+                    className={`${
+                      isUpdating && " pointer-events-none opacity-75 "
                     }`}
-                  onClick={addTools2Category}
-                >
-                  {isUpdating && (
-                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Add Toolsz
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>}
+                    onClick={addTools2Category}
+                  >
+                    {isUpdating && (
+                      <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Add Tools
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
           {dialogData && (
             <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
               <DialogContent className="sm:max-w-[425px]">
@@ -287,7 +296,12 @@ export default function Category({ params }: { params: { slug: string } }) {
                     <Label htmlFor="description" className="text-right">
                       Description
                     </Label>
-                    <ReactQuill className="col-span-3" theme="snow" onChange={quilChangeHandler} value={dialogData.description} />
+                    <ReactQuill
+                      className="col-span-3"
+                      theme="snow"
+                      onChange={quilChangeHandler}
+                      value={dialogData.description}
+                    />
 
                     {/* <Input
                       onChange={changeHandler}
@@ -335,8 +349,9 @@ export default function Category({ params }: { params: { slug: string } }) {
                 </div>
                 <DialogFooter>
                   <Button
-                    className={`${isUpdating && " pointer-events-none opacity-75 "
-                      }`}
+                    className={`${
+                      isUpdating && " pointer-events-none opacity-75 "
+                    }`}
                     onClick={updateTools}
                   >
                     {isUpdating && (

@@ -74,14 +74,10 @@ export default function Home() {
   // }
 
   async function fetchData() {
-    const timestamp = Date.now();
-    const toolRes = await fetch(
-      `https://admin.aitoolsnext.com/api/tools?timestamp=${timestamp}`,
-      {
-        cache: "no-cache",
-        method: "POST"
-      }
-    );
+    const toolRes = await fetch(`https://admin.aitoolsnext.com/api/tools`, {
+      method: "POST",
+      cache: "no-cache",
+    });
     const categorytoolRes = await fetch(
       "https://admin.aitoolsnext.com/api/categoryTools",
       {
@@ -178,14 +174,16 @@ export default function Home() {
 
   function addTools2Category(tool) {
     setIsUpdating(true);
+    console.log(selectedTools)
     const newArraya = [...selectedTools];
     console.log(newArraya);
     // console.log(tool)
-    dialogData?.secondarycategories?.map((el) => {
-      if (!newArraya.includes(el)) {
-        newArraya.push(el);
-      }
-    });
+    // dialogData?.secondarycategories?.map((el) => {
+    //   if (!newArraya.includes(el)) {
+    //     newArraya.push(el);
+    //   }
+    // });
+    // console.log(newArraya)
 
     // console.log(newArraya)
     // setSelectedTools((prev) => [...prev, ...tool?.secondarycategories]);
@@ -208,7 +206,7 @@ export default function Home() {
     setSelectedTools([]);
   }
   useEffect(() => {
-    if (isOpen == true) {
+    if (isActive != "1" && isOpen == true) {
       setSelectedTools([...dialogData?.secondarycategories]);
     } else {
       setSelectedTools([]);
