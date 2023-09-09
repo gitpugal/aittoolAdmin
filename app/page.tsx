@@ -74,9 +74,13 @@ export default function Home() {
   // }
 
   async function fetchData() {
-    const toolRes = await fetch("https://aiadmin.vercel.app/api/tools", {
-      cache: "no-cache",
-    });
+    const timestamp = Date.now();
+    const toolRes = await fetch(
+      `https://aiadmin.vercel.app/api/tools?timestamp=${timestamp}`,
+      {
+        cache: "no-cache",
+      }
+    );
     const categorytoolRes = await fetch(
       "https://aiadmin.vercel.app/api/categoryTools",
       {

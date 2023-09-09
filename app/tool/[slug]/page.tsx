@@ -136,6 +136,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   }
 
   function fetchData() {
+    
     const toolRes = fetch("https://aiadmin.vercel.app/api/tools");
     const categorytoolRes = fetch(
       "https://aiadmin.vercel.app/api/categoryTools"
