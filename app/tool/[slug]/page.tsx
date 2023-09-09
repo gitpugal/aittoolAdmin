@@ -38,7 +38,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   const [isAddToolOpen, setisAddToolOpen] = useState(false);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
-    const tools = fetch("http://localhost:3000/api/getTool", {
+    const tools = fetch("https://aiadmin.vercel.app/api/getTool", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -48,7 +48,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
       setTool(dataTool);
       setDialogData(dataTool);
     });
-    const categoryRes = fetch("http://localhost:3000/api/categories");
+    const categoryRes = fetch("https://aiadmin.vercel.app/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -70,7 +70,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `http://localhost:3000/api/${
+      `https://aiadmin.vercel.app/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -97,7 +97,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   function deleteTool(id) {
     setDeleting(true);
     const res = fetch(
-      `http://localhost:3000/api/${
+      `https://aiadmin.vercel.app/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -118,7 +118,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   }
   function addTools2Category() {
     setIsUpdating(true);
-    const res = fetch(`http://localhost:3000/api/addCategory2Tool`, {
+    const res = fetch(`https://aiadmin.vercel.app/api/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool.id, tools: selectedTools }),
     });
@@ -136,18 +136,18 @@ export default function Tool({ params }: { params: { slug: string } }) {
   }
 
   function fetchData() {
-    const toolRes = fetch("http://localhost:3000/api/tools");
+    const toolRes = fetch("https://aiadmin.vercel.app/api/tools");
     const categorytoolRes = fetch(
-      "http://localhost:3000/api/categoryTools"
+      "https://aiadmin.vercel.app/api/categoryTools"
     );
-    const categoryRes = fetch("http://localhost:3000/api/categories");
+    const categoryRes = fetch("https://aiadmin.vercel.app/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setCategories(res.categories);
       });
     });
-    const tools = fetch("http://localhost:3000/api/getTool", {
+    const tools = fetch("https://aiadmin.vercel.app/api/getTool", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });

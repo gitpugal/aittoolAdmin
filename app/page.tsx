@@ -74,13 +74,13 @@ export default function Home() {
   // }
 
   function fetchData() {
-    const toolRes = fetch("http://localhost:3000/api/tools",  {
+    const toolRes = fetch("https://aiadmin.vercel.app/api/tools",  {
       cache: 'no-cache',
     });
-    const categorytoolRes = fetch("http://localhost:3000/api/categoryTools",  {
+    const categorytoolRes = fetch("https://aiadmin.vercel.app/api/categoryTools",  {
       cache: 'no-cache',
     });
-    const categoryRes = fetch("http://localhost:3000/api/categories",  {
+    const categoryRes = fetch("https://aiadmin.vercel.app/api/categories",  {
       cache: 'no-cache',
     });
     categoryRes.then((val) => {
@@ -138,7 +138,7 @@ export default function Home() {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `http://localhost:3000/api/${
+      `https://aiadmin.vercel.app/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -160,7 +160,7 @@ export default function Home() {
   function deleteTool(id) {
     setIsUpdating(true);
     const res = fetch(
-      `http://localhost:3000/api/${
+      `https://aiadmin.vercel.app/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -192,7 +192,7 @@ export default function Home() {
 
     // console.log(newArraya)
     // setSelectedTools((prev) => [...prev, ...tool?.secondarycategories]);
-    const res = fetch(`http://localhost:3000/api/addCategory2Tool`, {
+    const res = fetch(`https://aiadmin.vercel.app/api/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool, tools: newArraya }),
     });
