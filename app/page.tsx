@@ -207,7 +207,10 @@ export default function Home() {
   }
   useEffect(() => {
     if (isActive != "1" && isOpen == true) {
-      setSelectedTools([...dialogData?.secondarycategories]);
+      // console.log(dialogData?.secondarycategories);
+      if (dialogData?.secondarycategories != null) {
+        setSelectedTools([...dialogData?.secondarycategories]);
+      }
     } else {
       setSelectedTools([]);
     }
@@ -232,7 +235,7 @@ export default function Home() {
 
       {dialogData && (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 Edit {isActive != "1" ? " tool " : " category"}
@@ -327,7 +330,7 @@ export default function Home() {
               )}
               {isActive != "1" && (
                 <div className="grid grid-cols-3 gap-1">
-                  {dialogData?.secondarycategories?.map((el) => (
+                  {dialogData?.secondarycategories?.slice(0, 3).map((el) => (
                     <p
                       key={el}
                       className={`bg-slate-100 w-fit px-3 cursor-pointer py-2 rounded-lg`}
