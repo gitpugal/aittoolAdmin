@@ -74,17 +74,17 @@ export default function Home() {
   // }
 
   async function fetchData() {
-    const toolRes = await fetch(`https://admin.aitoolsnext.com/api/tools`, {
+    const toolRes = await fetch(`http://localhost:3000/api/tools`, {
       method: "POST",
       cache: "no-cache",
     });
     const categorytoolRes = await fetch(
-      "https://admin.aitoolsnext.com/api/categoryTools",
+      "http://localhost:3000/api/categoryTools",
       {
         cache: "no-cache",
       }
     );
-    const categoryRes = await fetch("https://admin.aitoolsnext.com/api/categories", {
+    const categoryRes = await fetch("http://localhost:3000/api/categories", {
       cache: "no-cache",
     });
 
@@ -131,7 +131,7 @@ export default function Home() {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -153,7 +153,7 @@ export default function Home() {
   function deleteTool(id) {
     setIsUpdating(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -174,7 +174,7 @@ export default function Home() {
 
   function addTools2Category(tool) {
     setIsUpdating(true);
-    console.log(selectedTools)
+    console.log(selectedTools);
     const newArraya = [...selectedTools];
     console.log(newArraya);
     // console.log(tool)
@@ -187,7 +187,7 @@ export default function Home() {
 
     // console.log(newArraya)
     // setSelectedTools((prev) => [...prev, ...tool?.secondarycategories]);
-    const res = fetch(`https://admin.aitoolsnext.com/api/addCategory2Tool`, {
+    const res = fetch(`http://localhost:3000/api/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool, tools: newArraya }),
     });
@@ -320,7 +320,11 @@ export default function Home() {
                   </Select>
                 </div>
               )}
-
+              {isActive != "1" && (
+                <Label htmlFor="price" className="text-left mt-10">
+                  Other categories
+                </Label>
+              )}
               {isActive != "1" && (
                 <div className="grid grid-cols-3 gap-1">
                   {dialogData?.secondarycategories?.map((el) => (
@@ -340,7 +344,7 @@ export default function Home() {
               >
                 <DialogContent className="">
                   <DialogHeader>
-                    <DialogTitle>Add Tools</DialogTitle>
+                    <DialogTitle>Add Other categories</DialogTitle>
                   </DialogHeader>
                   <div className="w-full flex flex-row flex-wrap gap-2">
                     {categories &&
@@ -401,7 +405,7 @@ export default function Home() {
                   onClick={() => setisAddToolOpen(true)}
                   className="w-fit"
                 >
-                  Add Category
+                  Add Other Category
                 </Button>
               )}
               <Button
