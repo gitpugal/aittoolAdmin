@@ -2,11 +2,7 @@ import db from "../db";
 import { NextApiRequest, NextApiResponse } from "next";
 
 // Adjust the path as needed
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
-  //   if (req.method !== "GET") {
-  //     return res.status(405).end(); // Method Not Allowed
-  //   }
-
+export async function POST(re: Request, res: Request) {
   try {
     console.log("hih");
     const tools = await db.many("SELECT * FROM drafttools");
