@@ -1,6 +1,7 @@
 "use client";
 
 import { Icons } from "./icons";
+import { Switch } from "./ui/switch";
 import {
   Table,
   TableBody,
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Toggle } from "@radix-ui/react-toggle";
 import {
   ColumnDef,
   flexRender,
@@ -17,7 +19,7 @@ import {
 } from "@tanstack/react-table";
 import { Eye, PencilIcon, Trash } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: any;
@@ -30,6 +32,7 @@ interface DataTableProps<TData, TValue> {
 interface MyData {
   id: number;
   slug: string;
+  approved: boolean;
   // Add other properties here as needed
 }
 
@@ -46,7 +49,15 @@ export function DataTable<TData extends MyData, TValue>({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const [deletingId, setDeletingId] = useState(null);
+  const [hasUserColumn, setHasUserColumn] = useState(null);
+  const [currentApprovingTool, setcurrentApprovingTool] = useState(null);
+
+  useEffect(() => {
+    const hasUserColumn = columns?.some(
+      (column) => column.accessorKey === "user_id" && column.header === "User"
+    );
+    setHasUserColumn(hasUserColumn);
+  }, [columns]);
 
   return (
     <div className="rounded-md border">
@@ -67,6 +78,9 @@ export function DataTable<TData extends MyData, TValue>({
                   </TableHead>
                 );
               })}
+              <TableHead></TableHead>
+              <TableHead></TableHead>
+              {hasUserColumn && <TableHead key={"approve"}>Approved</TableHead>}
             </TableRow>
           ))}
         </TableHeader>
@@ -84,9 +98,7 @@ export function DataTable<TData extends MyData, TValue>({
                     dangerouslySetInnerHTML={{
                       __html: cell.renderValue()?.toString(),
                     }}
-                  >
-                    {/* {cell.renderValue().toString()} */}
-                  </TableCell>
+                  ></TableCell>
                 ))}
                 <TableCell
                   className="cursor-pointer"
@@ -96,21 +108,7 @@ export function DataTable<TData extends MyData, TValue>({
                 >
                   <PencilIcon color="gray" />
                 </TableCell>
-                {/* <TableCell
-                  className="cursor-pointer"
-                  onClick={() => {
-                    if (row.original.id != deletingId) {
-                      setDeletingId(row.original.id);
-                      deleteTool(row.original.id);
-                    }
-                  }}
-                >
-                  {row.original.id == deletingId ? (
-                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Trash color="red" />
-                  )}
-                </TableCell> */}
+
                 <Link
                   className="cursor-pointer"
                   href={`/${isCategory ? "category" : "tool"}/${
@@ -121,6 +119,14 @@ export function DataTable<TData extends MyData, TValue>({
                     <Eye color="gray" />
                   </TableCell>
                 </Link>
+                {hasUserColumn && (
+                  <TableCell>
+                    <Switch
+                    // onCheckedChange={() => {}}
+                    // checked={row?.original?.approved}
+                    />
+                  </TableCell>
+                )}
               </TableRow>
             ))
           ) : (

@@ -10,10 +10,10 @@ export type Payment = {
   category: string;
   createdAt: string;
   pricing: string;
+  user_id: string;
 };
 
 export const toolColumns: ColumnDef<Payment>[] = [
-
   {
     accessorKey: "name",
     header: "Name",
@@ -39,9 +39,38 @@ export const toolColumns: ColumnDef<Payment>[] = [
     header: "Pricing",
   },
 ];
+export const userToolsColumns: ColumnDef<Payment>[] = [
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+  {
+    accessorKey: "description",
+    header: "Description",
+  },
+  {
+    accessorKey: "slug",
+    header: "Slug",
+  },
+  {
+    accessorKey: "primarycategory",
+    header: "Category",
+  },
+  {
+    accessorKey: "created_at",
+    header: "created At",
+  },
+  {
+    accessorKey: "pricing",
+    header: "Pricing",
+  },
+  {
+    accessorKey: "user_id",
+    header: "User",
+  },
+];
 
 export const categoryColumns: ColumnDef<Payment>[] = [
- 
   {
     accessorKey: "name",
     header: "Name",

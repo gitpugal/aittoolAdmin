@@ -2,7 +2,11 @@
 
 import CardList from "@/components/CardList";
 import { TableDemo } from "@/components/CardTable";
-import { categoryColumns, toolColumns } from "@/components/Columns";
+import {
+  categoryColumns,
+  toolColumns,
+  userToolsColumns,
+} from "@/components/Columns";
 import DemoPage from "@/components/Table";
 import { DataTable } from "@/components/data-table";
 import { Icons } from "@/components/icons";
@@ -41,6 +45,7 @@ export default function Home() {
   const user = useSession();
   const router = useRouter();
   const [tools, setTools] = useState([]);
+  const [userTools, setUserTools] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [dialogData, setDialogData] = useState(null);
@@ -49,7 +54,15 @@ export default function Home() {
   const [categoryTools, setCategoryTools] = useState([]);
   const [selectedTools, setSelectedTools] = useState([]);
   const [isAddToolOpen, setisAddToolOpen] = useState(false);
+  const [openAddToolDialog, setOpenAddToolDialog] = useState(false);
 
+  const [toolName, setToolName] = useState("");
+  const [toolDescription, setToolDescription] = useState("");
+  const [toolFeatures, setToolFeatures] = useState("");
+  const [toolPricing, setToolPricing] = useState("");
+  const [toolImageUrl, setToolImageUrl] = useState("");
+  const [toolSlug, setToolSlug] = useState("");
+  const pricingOptions = ["Free", "Premium"];
   const sideBarLinks = [
     {
       id: 1,
@@ -61,7 +74,7 @@ export default function Home() {
     },
     {
       id: 3,
-      name: "Settings",
+      name: "Submitted Tools",
     },
   ];
   useEffect(() => {
@@ -69,10 +82,6 @@ export default function Home() {
       router.push("/login");
     }
   }, [user.status]);
-  // function renderHTML(htmlString) {
-  //   return { __html: htmlString };
-  // }
-
   async function fetchData() {
     const toolRes = await fetch(`https://admin.aitoolsnext.com/api/tools`, {
       method: "POST",
@@ -88,12 +97,19 @@ export default function Home() {
       cache: "no-cache",
     });
 
+    const userToolRes = await fetch(`https://admin.aitoolsnext.com/api/getUserTools`, {
+      method: "POST",
+      cache: "no-cache",
+    });
+
     const catDat = await categoryRes.json();
     setCategories(catDat.categories);
     const dat = await toolRes.json();
     setTools(dat.tools);
     const catToolDat = await categorytoolRes.json();
     setCategoryTools(catToolDat.tools);
+    const userToolData = await userToolRes.json();
+    setUserTools(userToolData.tools);
   }
   useEffect(() => {
     if (user.status == "unauthenticated") {
@@ -177,16 +193,6 @@ export default function Home() {
     console.log(selectedTools);
     const newArraya = [...selectedTools];
     console.log(newArraya);
-    // console.log(tool)
-    // dialogData?.secondarycategories?.map((el) => {
-    //   if (!newArraya.includes(el)) {
-    //     newArraya.push(el);
-    //   }
-    // });
-    // console.log(newArraya)
-
-    // console.log(newArraya)
-    // setSelectedTools((prev) => [...prev, ...tool?.secondarycategories]);
     const res = fetch(`https://admin.aitoolsnext.com/api/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool, tools: newArraya }),
@@ -205,6 +211,118 @@ export default function Home() {
     setIsUpdating(false);
     setSelectedTools([]);
   }
+
+  const handleCloseAddToolDialog = () => {
+    setOpenAddToolDialog((prev) => !prev);
+  };
+
+  const handleAddToolChange = (content, delta, source, editor) => {
+    setToolDescription(editor.getHTML());
+  };
+
+  const handleSaveTool = async () => {
+    if (toolName === null || toolName === "" || !toolName) {
+      return "No Tools Found.";
+    }
+
+    if (
+      toolDescription === null ||
+      toolDescription === "" ||
+      !toolDescription
+    ) {
+      return "No Tools Description Found.";
+    }
+
+    if (toolImageUrl === null || toolImageUrl === "" || !toolImageUrl) {
+      return "No Tools Image URL Found.";
+    }
+
+    if (toolSlug === null || toolSlug === "" || !toolSlug) {
+      return "No Tools Slug Found.";
+    }
+    const toolsData = {
+      name: toolName,
+      description: toolDescription,
+      features: toolFeatures,
+      pricing: toolPricing,
+      upvotes: 0,
+      imageURL: toolImageUrl,
+      slug: toolSlug,
+    };
+
+    console.log(JSON.stringify(toolsData));
+    const response = await fetch("https://admin.aitoolsnext.com/api/addTool", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(toolsData),
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      console.error(message);
+      return;
+    }
+    console.log(response.json());
+
+    // Update the UI as necessary
+    setOpenAddToolDialog(false);
+
+    // fetch the updated tools and categories
+    fetchData();
+  };
+
+  const handleSaveCategory = async () => {
+    if (toolName === null || toolName === "" || !toolName) {
+      return "No Tools Found.";
+    }
+
+    if (
+      toolDescription === null ||
+      toolDescription === "" ||
+      !toolDescription
+    ) {
+      return "No Tools Description Found.";
+    }
+
+    if (toolImageUrl === null || toolImageUrl === "" || !toolImageUrl) {
+      return "No Tools Image URL Found.";
+    }
+
+    if (toolSlug === null || toolSlug === "" || !toolSlug) {
+      return "No Tools Slug Found.";
+    }
+    const categoryData = {
+      name: toolName,
+      description: toolDescription,
+      imageURL: toolImageUrl,
+      slug: toolSlug,
+    };
+
+    console.log(JSON.stringify(categoryData));
+    const response = await fetch("https://admin.aitoolsnext.com/api/addCategory", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(categoryData),
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      console.error(message);
+      return;
+    }
+    console.log(response.json());
+
+    // Update the UI as necessary
+    setOpenAddToolDialog(false);
+
+    // fetch the updated tools and categories
+    fetchData();
+  };
+
   useEffect(() => {
     if (isActive != "1" && isOpen == true) {
       // console.log(dialogData?.secondarycategories);
@@ -243,7 +361,7 @@ export default function Home() {
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="Name" className="text-right">
+                <Label htmlFor="Name" className="text-left">
                   Name
                 </Label>
                 <Input
@@ -255,7 +373,7 @@ export default function Home() {
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-right">
+                <Label htmlFor="description" className="text-left">
                   Description
                 </Label>
                 <ReactQuill
@@ -266,7 +384,7 @@ export default function Home() {
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="slug" className="text-right">
+                <Label htmlFor="slug" className="text-left">
                   Slug
                 </Label>
                 <Input
@@ -279,7 +397,7 @@ export default function Home() {
               </div>
               {isActive != "1" && (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="category" className="text-right">
+                  <Label htmlFor="category" className="text-left">
                     Primary category
                   </Label>
                   <Select
@@ -303,7 +421,7 @@ export default function Home() {
               )}
               {isActive != "1" && (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="price" className="text-right">
+                  <Label htmlFor="price" className="text-left">
                     Price
                   </Label>
                   <Select
@@ -450,19 +568,116 @@ export default function Home() {
           <h1 className="w-full pb-20  text-center text-5xl font-light ">
             {sideBarLinks[parseInt(isActive) - 1].name}
           </h1>
-          {/* <TableDemo
-            openDialog={openDialog}
-            deleteTool={deleteTool}
-            isCategory={isActive == "1" ? true : false}
-            data={isActive == "1" ? categories : tools}
-          /> */}
+          <Dialog
+            open={openAddToolDialog}
+            onOpenChange={handleCloseAddToolDialog}
+          >
+            <DialogTrigger className="bg-black mb-5 px-4 py-2 rounded-xl text-white">
+              Add {isActive != "1" ? "Tool" : "Category"}
+            </DialogTrigger>
+            <DialogContent className="flex flex-col justify-start items-start gap-5">
+              <DialogTitle className="bg-black mb-5 px-4 py-2 rounded-xl text-white">
+                Add {isActive != "1" ? "Tool" : "Category"}
+              </DialogTitle>
+              <>
+                <Label htmlFor="toolName" className="text-left">
+                  Name
+                </Label>
+                <Input
+                  id="toolName"
+                  value={toolName}
+                  onChange={(e) => setToolName(e.target.value)}
+                />
+              </>
+              <>
+                {" "}
+                <Label htmlFor="Description" className="text-left">
+                  Description
+                </Label>
+                <ReactQuill
+                  value={toolDescription}
+                  onChange={handleAddToolChange}
+                />
+              </>
+              {isActive != "1" && (
+                <>
+                  {" "}
+                  <Label htmlFor="Features" className="text-left">
+                    Features
+                  </Label>
+                  <Input
+                    id="toolFeatuers"
+                    value={toolFeatures}
+                    onChange={(e) => setToolFeatures(e.target.value)}
+                  />
+                </>
+              )}
+              {isActive != "1" && (
+                <>
+                  {" "}
+                  <Label htmlFor="pricing" className="text-left">
+                    Pricing
+                  </Label>
+                  <select onChange={(e) => setToolPricing(e.target.value)}>
+                    {pricingOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
+
+              <>
+                {" "}
+                <Label htmlFor="Slug" className="text-left">
+                  Slug
+                </Label>
+                <Input
+                  value={toolSlug}
+                  id="toolSlug"
+                  onChange={(e) => setToolSlug(e.target.value)}
+                />
+              </>
+
+              <>
+                {" "}
+                <Label htmlFor="Image" className="text-left">
+                  Image
+                </Label>
+                <Input
+                  id="toolImageUrl"
+                  value={toolImageUrl}
+                  onChange={(e) => setToolImageUrl(e.target.value)}
+                />
+              </>
+              <DialogFooter>
+                <Button onClick={handleCloseAddToolDialog}>Cancel</Button>
+                <Button
+                  onClick={
+                    isActive != "1" ? handleSaveTool : handleSaveCategory
+                  }
+                >
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <DataTable
             id={0}
             openDialog={openDialog}
             deleteTool={deleteTool}
             isCategory={isActive == "1" ? true : false}
-            data={isActive == "1" ? categories : tools}
-            columns={isActive == "1" ? categoryColumns : toolColumns}
+            data={
+              isActive == "1" ? categories : isActive == "2" ? tools : userTools
+            }
+            columns={
+              isActive == "1"
+                ? categoryColumns
+                : isActive == "2"
+                ? toolColumns
+                : userToolsColumns
+            }
           />
         </div>
       </div>
