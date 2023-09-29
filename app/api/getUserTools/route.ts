@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 export async function POST(re: Request, res: Request) {
   try {
     console.log("hih");
-    const tools = await db.many("SELECT * FROM drafttools");
+    const tools = await db.many("SELECT * FROM drafttools where approved = false");
     return new Response(JSON.stringify({ tools: tools }), {
       status: 200,
     });

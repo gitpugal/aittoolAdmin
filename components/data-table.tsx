@@ -28,6 +28,7 @@ interface DataTableProps<TData, TValue> {
   openDialog: any;
   deleteTool: any;
   id: any;
+  addDraftToTools:any;
 }
 interface MyData {
   id: number;
@@ -42,6 +43,7 @@ export function DataTable<TData extends MyData, TValue>({
   isCategory,
   openDialog,
   deleteTool,
+  addDraftToTools
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -58,6 +60,7 @@ export function DataTable<TData extends MyData, TValue>({
     );
     setHasUserColumn(hasUserColumn);
   }, [columns]);
+
 
   return (
     <div className="rounded-md border">
@@ -122,8 +125,9 @@ export function DataTable<TData extends MyData, TValue>({
                 {hasUserColumn && (
                   <TableCell>
                     <Switch
-                    // onCheckedChange={() => {}}
-                    // checked={row?.original?.approved}
+                    onCheckedChange={() => {
+                      addDraftToTools(row.original.id);
+                    }}
                     />
                   </TableCell>
                 )}

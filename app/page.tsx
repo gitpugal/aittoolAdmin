@@ -83,21 +83,21 @@ export default function Home() {
     }
   }, [user.status]);
   async function fetchData() {
-    const toolRes = await fetch(`https://admin.aitoolsnext.com/api/tools`, {
+    const toolRes = await fetch(`http://localhost:3000/api/tools`, {
       method: "POST",
       cache: "no-cache",
     });
     const categorytoolRes = await fetch(
-      "https://admin.aitoolsnext.com/api/categoryTools",
+      "http://localhost:3000/api/categoryTools",
       {
         cache: "no-cache",
       }
     );
-    const categoryRes = await fetch("https://admin.aitoolsnext.com/api/categories", {
+    const categoryRes = await fetch("http://localhost:3000/api/categories", {
       cache: "no-cache",
     });
 
-    const userToolRes = await fetch(`https://admin.aitoolsnext.com/api/getUserTools`, {
+    const userToolRes = await fetch(`http://localhost:3000/api/getUserTools`, {
       method: "POST",
       cache: "no-cache",
     });
@@ -147,7 +147,7 @@ export default function Home() {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -169,7 +169,7 @@ export default function Home() {
   function deleteTool(id) {
     setIsUpdating(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `http://localhost:3000/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -193,7 +193,7 @@ export default function Home() {
     console.log(selectedTools);
     const newArraya = [...selectedTools];
     console.log(newArraya);
-    const res = fetch(`https://admin.aitoolsnext.com/api/addCategory2Tool`, {
+    const res = fetch(`http://localhost:3000/api/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool, tools: newArraya }),
     });
@@ -251,7 +251,7 @@ export default function Home() {
     };
 
     console.log(JSON.stringify(toolsData));
-    const response = await fetch("https://admin.aitoolsnext.com/api/addTool", {
+    const response = await fetch("http://localhost:3000/api/addTool", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -301,7 +301,7 @@ export default function Home() {
     };
 
     console.log(JSON.stringify(categoryData));
-    const response = await fetch("https://admin.aitoolsnext.com/api/addCategory", {
+    const response = await fetch("http://localhost:3000/api/addCategory", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -322,6 +322,18 @@ export default function Home() {
     // fetch the updated tools and categories
     fetchData();
   };
+
+  async function addDraftToTools(id) {
+    const response = await fetch("http://localhost:3000/api/addDraftToTools", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+    });
+    console.log(response);
+    fetchData();
+  }
 
   useEffect(() => {
     if (isActive != "1" && isOpen == true) {
@@ -667,6 +679,7 @@ export default function Home() {
             id={0}
             openDialog={openDialog}
             deleteTool={deleteTool}
+            addDraftToTools={addDraftToTools}
             isCategory={isActive == "1" ? true : false}
             data={
               isActive == "1" ? categories : isActive == "2" ? tools : userTools
