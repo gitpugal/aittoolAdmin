@@ -93,16 +93,24 @@ export default function Home() {
       "https://admin.aitoolsnext.com/api/categoryTools",
       {
         cache: "no-cache",
+        method: "POST",
       }
     );
-    const categoryRes = await fetch("https://admin.aitoolsnext.com/api/categories", {
-      cache: "no-cache",
-    });
+    const categoryRes = await fetch(
+      "https://admin.aitoolsnext.com/api/categories",
+      {
+        method: "POST",
+        cache: "no-cache",
+      }
+    );
 
-    const userToolRes = await fetch(`https://admin.aitoolsnext.com/api/getUserTools`, {
-      method: "POST",
-      cache: "no-cache",
-    });
+    const userToolRes = await fetch(
+      `https://admin.aitoolsnext.com/api/getUserTools`,
+      {
+        method: "POST",
+        cache: "no-cache",
+      }
+    );
 
     const catDat = await categoryRes.json();
     setCategories(catDat.categories);
@@ -321,13 +329,16 @@ export default function Home() {
     };
 
     console.log(JSON.stringify(categoryData));
-    const response = await fetch("https://admin.aitoolsnext.com/api/addCategory", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(categoryData),
-    });
+    const response = await fetch(
+      "https://admin.aitoolsnext.com/api/addCategory",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(categoryData),
+      }
+    );
 
     if (!response.ok) {
       const message = await response.text();
@@ -350,13 +361,16 @@ export default function Home() {
   };
 
   async function addDraftToTools(id) {
-    const response = await fetch("https://admin.aitoolsnext.com/api/addDraftToTools", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: id }),
-    });
+    const response = await fetch(
+      "https://admin.aitoolsnext.com/api/addDraftToTools",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id }),
+      }
+    );
     console.log(response);
     fetchData();
   }
