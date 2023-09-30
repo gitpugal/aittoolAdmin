@@ -2,16 +2,22 @@ import db from "../db";
 
 export async function POST(req: Request, res: Request) {
   try {
-    const { name, description, imageURL, slug } = await new Response(
+    const { name, description, imageURL, slug, status } = await new Response(
       req.body
     ).json();
     let res;
     const result = await db
       .one(
-        `INSERT INTO categories (name, description, slug, image) 
-           VALUES ($1, $2, $3, $4) 
+        `INSERT INTO categories (name, description, slug, image, status) 
+           VALUES ($1, $2, $3, $4, $5) 
            RETURNING id`,
-        [name, description, slug, imageURL]
+        [
+          name,
+          description,
+          slug,
+          imageURL,
+          (status.length <= 0 || status == "draft") ? "draft" : status,
+        ]
       )
 
       .then(async () => {

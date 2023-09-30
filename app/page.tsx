@@ -62,6 +62,8 @@ export default function Home() {
   const [toolPricing, setToolPricing] = useState("");
   const [toolImageUrl, setToolImageUrl] = useState("");
   const [toolSlug, setToolSlug] = useState("");
+  const [toolPrimaryCategory, setToolprimaryCategory] = useState(null);
+  const [toolStatus, setToolStatus] = useState("");
   const pricingOptions = ["Free", "Premium"];
   const sideBarLinks = [
     {
@@ -221,6 +223,7 @@ export default function Home() {
   };
 
   const handleSaveTool = async () => {
+    console.log("adding//");
     if (toolName === null || toolName === "" || !toolName) {
       return "No Tools Found.";
     }
@@ -240,14 +243,22 @@ export default function Home() {
     if (toolSlug === null || toolSlug === "" || !toolSlug) {
       return "No Tools Slug Found.";
     }
+
+    // console.log(toolPricing)
+
     const toolsData = {
       name: toolName,
       description: toolDescription,
       features: toolFeatures,
-      pricing: toolPricing,
+      pricing: toolPricing.length > 0 ? toolPricing : "Free",
       upvotes: 0,
       imageURL: toolImageUrl,
       slug: toolSlug,
+      primarycategory:
+        toolPrimaryCategory != null && toolPrimaryCategory.length > 0
+          ? toolPrimaryCategory
+          : "",
+      status: toolStatus,
     };
 
     console.log(JSON.stringify(toolsData));
@@ -265,6 +276,14 @@ export default function Home() {
       return;
     }
     console.log(response.json());
+    setToolName("");
+    setToolDescription("");
+    setToolFeatures("");
+    setToolPricing("");
+    setToolImageUrl("");
+    setToolSlug("");
+    setToolprimaryCategory("");
+    setToolStatus("");
 
     // Update the UI as necessary
     setOpenAddToolDialog(false);
@@ -298,6 +317,7 @@ export default function Home() {
       description: toolDescription,
       imageURL: toolImageUrl,
       slug: toolSlug,
+      status: toolStatus,
     };
 
     console.log(JSON.stringify(categoryData));
@@ -314,6 +334,12 @@ export default function Home() {
       console.error(message);
       return;
     }
+    setToolName("");
+    setToolDescription("");
+    setToolImageUrl("");
+    setToolSlug("");
+    setToolStatus("");
+
     console.log(response.json());
 
     // Update the UI as necessary
@@ -365,7 +391,7 @@ export default function Home() {
 
       {dialogData && (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
-          <DialogContent>
+          <DialogContent className="h-screen  overflow-y-scroll">
             <DialogHeader>
               <DialogTitle>
                 Edit {isActive != "1" ? " tool " : " category"}
@@ -471,6 +497,29 @@ export default function Home() {
                   ))}
                 </div>
               )}
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-left">
+                  Status
+                </Label>
+                <Select
+                  name="status"
+                  onValueChange={(e) => {
+                    setDialogData((prev) => ({ ...prev, status: e }));
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder={dialogData.status} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>{dialogData.status}</SelectLabel>
+                      <SelectItem value="draft">draft</SelectItem>
+                      <SelectItem value="published">published</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
               <Dialog
                 open={isAddToolOpen}
                 onOpenChange={() => setisAddToolOpen(false)}
@@ -587,7 +636,7 @@ export default function Home() {
             <DialogTrigger className="bg-black mb-5 px-4 py-2 rounded-xl text-white">
               Add {isActive != "1" ? "Tool" : "Category"}
             </DialogTrigger>
-            <DialogContent className="flex flex-col justify-start items-start gap-5">
+            <DialogContent className="flex flex-col h-screen  overflow-y-scroll justify-start items-start gap-5">
               <DialogTitle className="bg-black mb-5 px-4 py-2 rounded-xl text-white">
                 Add {isActive != "1" ? "Tool" : "Category"}
               </DialogTitle>
@@ -625,20 +674,95 @@ export default function Home() {
                 </>
               )}
               {isActive != "1" && (
-                <>
-                  {" "}
-                  <Label htmlFor="pricing" className="text-left">
+                <div className="">
+                  <Label htmlFor="category" className="text-left">
                     Pricing
                   </Label>
-                  <select onChange={(e) => setToolPricing(e.target.value)}>
-                    {pricingOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </>
+                  <Select
+                    name="pricing"
+                    onValueChange={(e) => {
+                      setToolPricing(e);
+                    }}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder={""} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>
+                          {dialogData && dialogData.pricing != null
+                            ? dialogData.pricing
+                            : ""}
+                        </SelectLabel>
+                        <SelectItem value={"Free"}>Free</SelectItem>
+                        <SelectItem value={"Premium"}>Premium</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
+
+              {isActive != "1" && (
+                <div className="">
+                  <Label htmlFor="category" className="text-left">
+                    Primary category
+                  </Label>
+                  <Select
+                    name="primarycategpry"
+                    onValueChange={(e) => {
+                      setToolprimaryCategory(e);
+                    }}
+                    onOpenChange={(e) => {
+                      setToolprimaryCategory(e);
+                    }}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue
+                        placeholder={
+                          dialogData && dialogData.primarycategory != null
+                            ? dialogData.primarycategory
+                            : ""
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>
+                          {dialogData && dialogData.primarycategory != null
+                            ? dialogData.primarycategory
+                            : ""}
+                        </SelectLabel>
+                        {categories.map((cat, index) => (
+                          <SelectItem value={cat.name}>{cat.name}</SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <div className="">
+                <Label htmlFor="category" className="text-left">
+                  Status
+                </Label>
+                <Select
+                  name="status"
+                  onValueChange={(e) => {
+                    setToolStatus(e);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder={""} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>draft</SelectLabel>
+                      <SelectItem value={"draft"}>draft</SelectItem>
+                      <SelectItem value={"published"}>published</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
               <>
                 {" "}

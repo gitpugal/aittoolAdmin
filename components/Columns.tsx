@@ -31,6 +31,10 @@ export const toolColumns: ColumnDef<Payment>[] = [
     header: "Category",
   },
   {
+    accessorKey: "status",
+    header: "Status",
+  },
+  {
     accessorKey: "created_at",
     header: "created At",
   },
@@ -83,6 +87,10 @@ export const categoryColumns: ColumnDef<Payment>[] = [
   {
     accessorKey: "slug",
     header: "Slug",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
   },
   {
     accessorKey: "created_at",
