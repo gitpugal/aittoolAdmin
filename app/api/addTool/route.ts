@@ -12,7 +12,7 @@ export async function POST(req: Request, res: Request) {
       slug,
       pricing,
       primarycategory,
-      status
+      status,
     } = await new Response(req.body).json();
     let res;
     const result = await db
@@ -21,7 +21,7 @@ export async function POST(req: Request, res: Request) {
         [
           name,
           description,
-          "This is the full description of the dummy tool.",
+          description?.toString(),
           "Alternative description for the dummy tool.",
           features || "Features of the dummy tool.",
           "Frequently asked questions about the dummy tool.",
@@ -32,7 +32,7 @@ export async function POST(req: Request, res: Request) {
           slug,
           pricing || "Not Specified",
           primarycategory,
-          status.length <= 0 ? "draft" : (status == "draft" ? "draft" : status)
+          status.length <= 0 ? "draft" : status == "draft" ? "draft" : status,
         ]
       )
       .then(async () => {
