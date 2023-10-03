@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { signOut, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
@@ -51,7 +52,7 @@ export default function Home() {
   const [dialogData, setDialogData] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isActive, setIsactive] = useState("1");
-  const [categoryTools, setCategoryTools] = useState([]);
+  // const [categoryTools, setCategoryTools] = useState([]);
   const [selectedTools, setSelectedTools] = useState([]);
   const [isAddToolOpen, setisAddToolOpen] = useState(false);
   const [openAddToolDialog, setOpenAddToolDialog] = useState(false);
@@ -64,6 +65,7 @@ export default function Home() {
   const [toolSlug, setToolSlug] = useState("");
   const [toolPrimaryCategory, setToolprimaryCategory] = useState(null);
   const [toolStatus, setToolStatus] = useState("");
+  const [seokey, setseokey] = useState("");
   const pricingOptions = ["Free", "Premium"];
   const sideBarLinks = [
     {
@@ -85,39 +87,33 @@ export default function Home() {
     }
   }, [user.status]);
   async function fetchData() {
-    const toolRes = await fetch(`https://admin.aitoolsnext.com/api/tools`, {
+    const toolRes = await fetch(`https://admin.aitoolsnext.comapi/tools`, {
       method: "POST",
       cache: "no-cache",
     });
-    const categorytoolRes = await fetch(
-      "https://admin.aitoolsnext.com/api/categoryTools",
-      {
-        cache: "no-cache",
-        method: "POST",
-      }
-    );
-    const categoryRes = await fetch(
-      "https://admin.aitoolsnext.com/api/categories",
-      {
-        method: "POST",
-        cache: "no-cache",
-      }
-    );
+    // const categorytoolRes = await fetch(
+    //   "https://admin.aitoolsnext.comapi/categoryTools",
+    //   {
+    //     cache: "no-cache",
+    //     method: "POST",
+    //   }
+    // );
+    const categoryRes = await fetch("https://admin.aitoolsnext.comapi/categories", {
+      method: "POST",
+      cache: "no-cache",
+    });
 
-    const userToolRes = await fetch(
-      `https://admin.aitoolsnext.com/api/getUserTools`,
-      {
-        method: "POST",
-        cache: "no-cache",
-      }
-    );
+    const userToolRes = await fetch(`https://admin.aitoolsnext.comapi/getUserTools`, {
+      method: "POST",
+      cache: "no-cache",
+    });
 
     const catDat = await categoryRes.json();
     setCategories(catDat.categories);
     const dat = await toolRes.json();
     setTools(dat.tools);
-    const catToolDat = await categorytoolRes.json();
-    setCategoryTools(catToolDat.tools);
+    // const catToolDat = await categorytoolRes.json();
+    // setCategoryTools(catToolDat.tools);
     const userToolData = await userToolRes.json();
     setUserTools(userToolData.tools);
   }
@@ -133,7 +129,12 @@ export default function Home() {
   }
   function openDialog(data) {
     console.log(data.original);
-    setDialogData(data.original);
+    setDialogData({
+      ...data.original,
+      seoTitle: "",
+      seoDescription: "",
+      seoKeywords: [],
+    });
     setIsOpen((prev) => !prev);
   }
   function changeHandler(e) {
@@ -153,11 +154,15 @@ export default function Home() {
     setDialogData((prev) => ({ ...prev, description: val }));
   }
 
+  function seokeywordsChangeHandler(e) {
+    setseokey(e.target.value);
+  }
+
   function updateTools() {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `https://admin.aitoolsnext.comapi/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -179,7 +184,7 @@ export default function Home() {
   function deleteTool(id) {
     setIsUpdating(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `https://admin.aitoolsnext.comapi/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -203,7 +208,7 @@ export default function Home() {
     console.log(selectedTools);
     const newArraya = [...selectedTools];
     console.log(newArraya);
-    const res = fetch(`https://admin.aitoolsnext.com/api/addCategory2Tool`, {
+    const res = fetch(`https://admin.aitoolsnext.comapi/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool, tools: newArraya }),
     });
@@ -270,7 +275,7 @@ export default function Home() {
     };
 
     console.log(JSON.stringify(toolsData));
-    const response = await fetch("https://admin.aitoolsnext.com/api/addTool", {
+    const response = await fetch("https://admin.aitoolsnext.comapi/addTool", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -329,16 +334,13 @@ export default function Home() {
     };
 
     console.log(JSON.stringify(categoryData));
-    const response = await fetch(
-      "https://admin.aitoolsnext.com/api/addCategory",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(categoryData),
-      }
-    );
+    const response = await fetch("https://admin.aitoolsnext.comapi/addCategory", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(categoryData),
+    });
 
     if (!response.ok) {
       const message = await response.text();
@@ -361,18 +363,33 @@ export default function Home() {
   };
 
   async function addDraftToTools(id) {
-    const response = await fetch(
-      "https://admin.aitoolsnext.com/api/addDraftToTools",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: id }),
-      }
-    );
+    const response = await fetch("https://admin.aitoolsnext.comapi/addDraftToTools", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+    });
     console.log(response);
     fetchData();
+  }
+
+  function addkeywords() {
+    if (seokey.length >= 2) {
+      if (
+        dialogData.seokeywords == null ||
+        !dialogData.seokeywords.includes(seokey)
+      ) {
+        const newkeywords =
+          dialogData.seokeywords != null && dialogData.seokeywords.length > 0
+            ? [...dialogData.seokeywords, seokey]
+            : [seokey];
+        console.log(newkeywords);
+        setDialogData((prev) => ({ ...prev, seokeywords: newkeywords }));
+      }
+
+      setseokey("");
+    }
   }
 
   useEffect(() => {
@@ -405,217 +422,310 @@ export default function Home() {
 
       {dialogData && (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
-          <DialogContent className="h-screen  overflow-y-scroll">
-            <DialogHeader>
-              <DialogTitle>
-                Edit {isActive != "1" ? " tool " : " category"}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="Name" className="text-left">
-                  Name
-                </Label>
-                <Input
-                  onChange={changeHandler}
-                  id="Name"
-                  name="name"
-                  value={dialogData.name}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-left">
-                  Description
-                </Label>
-                <ReactQuill
-                  className="col-span-3"
-                  theme="snow"
-                  onChange={quilChangeHandler}
-                  value={dialogData.description}
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="slug" className="text-left">
-                  Slug
-                </Label>
-                <Input
-                  onChange={changeHandler}
-                  id="slug"
-                  name="slug"
-                  value={dialogData.slug}
-                  className="col-span-3"
-                />
-              </div>
-              {isActive != "1" && (
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="category" className="text-left">
-                    Primary category
-                  </Label>
-                  <Select
-                    name="primarycategpry"
-                    onValueChange={selectPrimaryChangeHandler}
-                    onOpenChange={selectPrimaryChangeHandler}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder={dialogData.primarycategory} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>{dialogData.primarycategory}</SelectLabel>
-                        {categories.map((cat, index) => (
-                          <SelectItem value={cat.name}>{cat.name}</SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-              {isActive != "1" && (
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="price" className="text-left">
-                    Price
-                  </Label>
-                  <Select
-                    name="pricing"
-                    onValueChange={selectPriceChangeHandler}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder={dialogData.pricing} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>{dialogData.pricing}</SelectLabel>
-                        <SelectItem value="Free">Free</SelectItem>
-                        <SelectItem value="Premium">Premium</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-              {isActive != "1" && (
-                <Label htmlFor="price" className="text-left mt-10">
-                  Other categories
-                </Label>
-              )}
-              {isActive != "1" && (
-                <div className="grid grid-cols-3 gap-1">
-                  {dialogData?.secondarycategories?.slice(0, 3).map((el) => (
-                    <p
-                      key={el}
-                      className={`bg-slate-100 w-fit px-3 cursor-pointer py-2 rounded-lg`}
-                    >
-                      {el}
-                      <span className="text-2xl ml-2 font-light inline">+</span>
-                    </p>
-                  ))}
-                </div>
-              )}
-
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="status" className="text-left">
-                  Status
-                </Label>
-                <Select
-                  name="status"
-                  onValueChange={(e) => {
-                    setDialogData((prev) => ({ ...prev, status: e }));
-                  }}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={dialogData.status} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>{dialogData.status}</SelectLabel>
-                      <SelectItem value="draft">draft</SelectItem>
-                      <SelectItem value="published">published</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Dialog
-                open={isAddToolOpen}
-                onOpenChange={() => setisAddToolOpen(false)}
+          <DialogContent className="h-[80vh] overflow-y-scroll">
+            <Tabs defaultValue="content" className="w-full focus:border-none">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="content">Content</TabsTrigger>
+                <TabsTrigger value="seo">SEO</TabsTrigger>
+              </TabsList>
+              <TabsContent
+                className=" focus-visible:outline-none focus:outline-none  focus-visible:border-none focus-visible:ring-transparent"
+                value="content"
               >
-                <DialogContent className="">
-                  <DialogHeader>
-                    <DialogTitle>Add Other categories</DialogTitle>
-                  </DialogHeader>
-                  <div className="w-full flex flex-row flex-wrap gap-2">
-                    {categories &&
-                      categories.map((el) => {
-                        return (
+                <DialogHeader>
+                  <DialogTitle>
+                    Edit {isActive != "1" ? " tool " : " category"}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="Name" className="text-left">
+                      Name
+                    </Label>
+                    <Input
+                      onChange={changeHandler}
+                      id="Name"
+                      name="name"
+                      value={dialogData.name}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="description" className="text-left">
+                      Description
+                    </Label>
+                    <ReactQuill
+                      className="col-span-3"
+                      theme="snow"
+                      onChange={quilChangeHandler}
+                      value={dialogData.description}
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="slug" className="text-left">
+                      Slug
+                    </Label>
+                    <Input
+                      onChange={changeHandler}
+                      id="slug"
+                      name="slug"
+                      value={dialogData.slug}
+                      className="col-span-3"
+                    />
+                  </div>
+                  {isActive != "1" && (
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="category" className="text-left">
+                        Primary category
+                      </Label>
+                      <Select
+                        name="primarycategpry"
+                        onValueChange={selectPrimaryChangeHandler}
+                        onOpenChange={selectPrimaryChangeHandler}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue
+                            placeholder={dialogData.primarycategory}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>
+                              {dialogData.primarycategory}
+                            </SelectLabel>
+                            {categories.map((cat, index) => (
+                              <SelectItem value={cat.name}>
+                                {cat.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  {isActive != "1" && (
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="price" className="text-left">
+                        Price
+                      </Label>
+                      <Select
+                        name="pricing"
+                        onValueChange={selectPriceChangeHandler}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder={dialogData.pricing} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>{dialogData.pricing}</SelectLabel>
+                            <SelectItem value="Free">Free</SelectItem>
+                            <SelectItem value="Premium">Premium</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  {isActive != "1" && (
+                    <Label htmlFor="price" className="text-left mt-10">
+                      Other categories
+                    </Label>
+                  )}
+                  {isActive != "1" && (
+                    <div className="grid grid-cols-3 gap-1">
+                      {dialogData?.secondarycategories
+                        ?.slice(0, 3)
+                        .map((el) => (
                           <p
-                            key={el.id + "" + el.name}
-                            className={`${
-                              selectedTools &&
-                              selectedTools.length > 0 &&
-                              selectedTools.includes(el.name)
-                                ? "bg-black text-white "
-                                : "bg-slate-100"
-                            } w-fit px-3 cursor-pointer py-2 rounded-lg`}
-                            onClick={() => {
-                              if (
-                                selectedTools &&
-                                selectedTools.length > 0 &&
-                                selectedTools.includes(el.name)
-                              ) {
-                                const newArray = selectedTools.filter(
-                                  (it) => it != el.name
-                                );
-                                setSelectedTools(newArray);
-                              } else {
-                                setSelectedTools((prev) => [...prev, el.name]);
-                              }
-                            }}
+                            key={el}
+                            className={`bg-slate-100 w-fit px-3 cursor-pointer py-2 rounded-lg`}
                           >
-                            {el.name}
+                            {el}
                             <span className="text-2xl ml-2 font-light inline">
                               +
                             </span>
                           </p>
-                        );
-                      })}
-                  </div>
-                  <DialogFooter>
-                    <Button
-                      className={`${
-                        isUpdating && " pointer-events-none opacity-75 "
-                      }`}
-                      onClick={() => addTools2Category(dialogData.id)}
-                    >
-                      {isUpdating && (
-                        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                      )}
-                      Add Tools
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </div>
+                        ))}
+                    </div>
+                  )}
 
-            <DialogFooter>
-              {isActive != "1" && (
-                <Button
-                  onClick={() => setisAddToolOpen(true)}
-                  className="w-fit"
-                >
-                  Add Other Category
-                </Button>
-              )}
-              <Button
-                className={`${
-                  isUpdating && " pointer-events-none opacity-75 "
-                }`}
-                onClick={updateTools}
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="status" className="text-left">
+                      Status
+                    </Label>
+                    <Select
+                      name="status"
+                      onValueChange={(e) => {
+                        setDialogData((prev) => ({ ...prev, status: e }));
+                      }}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder={dialogData.status} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>{dialogData.status}</SelectLabel>
+                          <SelectItem value="draft">draft</SelectItem>
+                          <SelectItem value="published">published</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Dialog
+                    open={isAddToolOpen}
+                    onOpenChange={() => setisAddToolOpen(false)}
+                  >
+                    <DialogContent className="">
+                      <DialogHeader>
+                        <DialogTitle>Add Other categories</DialogTitle>
+                      </DialogHeader>
+                      <div className="w-full flex flex-row flex-wrap gap-2">
+                        {categories &&
+                          categories.map((el) => {
+                            return (
+                              <p
+                                key={el.id + "" + el.name}
+                                className={`${
+                                  selectedTools &&
+                                  selectedTools.length > 0 &&
+                                  selectedTools.includes(el.name)
+                                    ? "bg-black text-white "
+                                    : "bg-slate-100"
+                                } w-fit px-3 cursor-pointer py-2 rounded-lg`}
+                                onClick={() => {
+                                  if (
+                                    selectedTools &&
+                                    selectedTools.length > 0 &&
+                                    selectedTools.includes(el.name)
+                                  ) {
+                                    const newArray = selectedTools.filter(
+                                      (it) => it != el.name
+                                    );
+                                    setSelectedTools(newArray);
+                                  } else {
+                                    setSelectedTools((prev) => [
+                                      ...prev,
+                                      el.name,
+                                    ]);
+                                  }
+                                }}
+                              >
+                                {el.name}
+                                <span className="text-2xl ml-2 font-light inline">
+                                  +
+                                </span>
+                              </p>
+                            );
+                          })}
+                      </div>
+                      <DialogFooter>
+                        <Button
+                          className={`${
+                            isUpdating && " pointer-events-none opacity-75 "
+                          }`}
+                          onClick={() => addTools2Category(dialogData.id)}
+                        >
+                          {isUpdating && (
+                            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                          )}
+                          Add Tools
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                <DialogFooter>
+                  {isActive != "1" && (
+                    <Button
+                      onClick={() => setisAddToolOpen(true)}
+                      className="w-fit"
+                    >
+                      Add Other Category
+                    </Button>
+                  )}
+                  <Button
+                    className={`${
+                      isUpdating && " pointer-events-none opacity-75 "
+                    }`}
+                    onClick={updateTools}
+                  >
+                    {isUpdating && (
+                      <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Save chages
+                  </Button>
+                </DialogFooter>
+              </TabsContent>
+
+              <TabsContent
+                className=" focus-visible:outline-none focus:outline-none  focus-visible:border-none focus-visible:ring-transparent"
+                value="seo"
               >
-                {isUpdating && (
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Save chages
-              </Button>
-            </DialogFooter>
+                <DialogHeader>
+                  <DialogTitle>SEO</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="Name" className="text-left">
+                      Title
+                    </Label>
+                    <Input
+                      onChange={changeHandler}
+                      id="seoTitle"
+                      name="seotitle"
+                      value={dialogData.seotitle}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="description" className="text-left">
+                      Description
+                    </Label>
+                    <Input
+                      className="col-span-3"
+                      name="seodescription"
+                      onChange={changeHandler}
+                      value={dialogData.seodescription}
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="Name" className="text-left">
+                      Keywords
+                    </Label>
+                      <Input
+                        onChange={seokeywordsChangeHandler}
+                        id="seoKeywords"
+                        name="seoKeywords"
+                        value={seokey}
+                        className="col-span-3"
+                      />
+                      <button className=" bg-black col-span-2 whitespace-nowrap text-white px-3 py-1 rounded-xl" onClick={addkeywords}>Add Keyword</button>
+                  </div>
+                  <div className="w-full flex flex-row flex-wrap gap-2 items-stretch justify-start">
+                    {dialogData.seokeywords != null &&
+                      dialogData.seokeywords.length > 0 &&
+                      dialogData.seokeywords.map((keyword) => (
+                        <p
+                          onClick={() => {
+                            const newkeywords = dialogData.seokeywords.filter(
+                              (it) => it != keyword
+                            );
+                            console.log(newkeywords);
+                            setDialogData((prev) => ({
+                              ...prev,
+                              seokeywords: newkeywords,
+                            }));
+                            setseokey("");
+                          }}
+                          className="bg-slate-200 px-2 py-1 text-black rounded-xl"
+                        >
+                          {keyword}
+                        </p>
+                      ))}
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           </DialogContent>
         </Dialog>
       )}

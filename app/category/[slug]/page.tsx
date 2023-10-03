@@ -47,7 +47,7 @@ export default function Category({ params }: { params: { slug: string } }) {
     const timestamp = Date.now();
 
     const toolRes = await fetch(
-      `https://admin.aitoolsnext.com/api/tools?timestamp=${timestamp}`,
+      `https://admin.aitoolsnext.comapi/tools?timestamp=${timestamp}`,
       {
         cache: "no-cache",
         method: "POST",
@@ -55,7 +55,7 @@ export default function Category({ params }: { params: { slug: string } }) {
     );
     const dat = await toolRes.json();
     setTools(dat.tools);
-    const tool = fetch("https://admin.aitoolsnext.com/api/getCategory", {
+    const tool = fetch("https://admin.aitoolsnext.comapi/getCategory", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -65,7 +65,7 @@ export default function Category({ params }: { params: { slug: string } }) {
       setTool(dataTool);
       setDialogData(dataTool);
     });
-    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
+    const categoryRes = fetch("https://admin.aitoolsnext.comapi/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -92,7 +92,7 @@ export default function Category({ params }: { params: { slug: string } }) {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `https://admin.aitoolsnext.comapi/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -113,7 +113,7 @@ export default function Category({ params }: { params: { slug: string } }) {
 
   function addTools2Category() {
     setIsUpdating(true);
-    const res = fetch(`https://admin.aitoolsnext.com/api/addTool2Category`, {
+    const res = fetch(`https://admin.aitoolsnext.comapi/addTool2Category`, {
       method: "POST",
       body: JSON.stringify({ id: tool.id, tools: selectedTools }),
     });
@@ -133,7 +133,7 @@ export default function Category({ params }: { params: { slug: string } }) {
   function deleteTool(id) {
     setDeleting(true);
     const res = fetch(
-      `https://admin.aitoolsnext.com/api/${
+      `https://admin.aitoolsnext.comapi/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -154,16 +154,16 @@ export default function Category({ params }: { params: { slug: string } }) {
   }
 
   function fetchData() {
-    // const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
-    // const categorytoolRes = fetch("https://admin.aitoolsnext.com/api/categoryTools");
-    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
+    // const toolRes = fetch("https://admin.aitoolsnext.comapi/tools");
+    // const categorytoolRes = fetch("https://admin.aitoolsnext.comapi/categoryTools");
+    const categoryRes = fetch("https://admin.aitoolsnext.comapi/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setCategories(res.categories);
       });
     });
-    const tools = fetch("https://admin.aitoolsnext.com/api/getCategory", {
+    const tools = fetch("https://admin.aitoolsnext.comapi/getCategory", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -175,7 +175,7 @@ export default function Category({ params }: { params: { slug: string } }) {
     });
   }
   async function goToTool(id) {
-    const toolRes = await fetch("https://admin.aitoolsnext.com/api/getToolByID", {
+    const toolRes = await fetch("https://admin.aitoolsnext.comapi/getToolByID", {
       method: "POST",
       body: JSON.stringify({ id: id }),
     });

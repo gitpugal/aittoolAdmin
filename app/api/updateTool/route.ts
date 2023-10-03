@@ -5,11 +5,21 @@ import { NextApiRequest, NextApiResponse } from "next";
 export async function POST(re: Request, res: Request) {
   try {
     // const [name, description, slug, primarycategory, pricing, id] = re.body;
-    const { name, id, slug, description, pricing, primarycategory, status } =
-      await new Response(re.body).json();
+    const {
+      name,
+      id,
+      slug,
+      description,
+      pricing,
+      primarycategory,
+      status,
+      seotitle,
+      seodescription,
+      seokeywords,
+    } = await new Response(re.body).json();
     const tools = await db.one(
       `UPDATE tools 
-         SET name = $1, description = $2, slug = $3, primarycategory = $4, pricing = $5, status = $7
+         SET name = $1, description = $2, slug = $3, primarycategory = $4, pricing = $5, status = $7, seotitle = $8, seodescription = $9, seokeywords = $10
          WHERE id = $6 returning name`,
       [
         name,
@@ -19,6 +29,9 @@ export async function POST(re: Request, res: Request) {
         pricing,
         id,
         status.length <= 0 || status == "draft" ? "draft" : status,
+        seotitle.length <= 0 ? name : seotitle,
+        seodescription.length <= 0 ? description : seodescription,
+        seokeywords.length <= 0 ? [] : seokeywords,
       ]
     );
     console.log(tools);
@@ -26,6 +39,7 @@ export async function POST(re: Request, res: Request) {
       status: 200,
     });
   } catch (error) {
+    console.log(error)
     return new Response("No Tools!", {
       status: 505,
     });

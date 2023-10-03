@@ -5,12 +5,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 export async function POST(re: Request, res: Request) {
   try {
     // const [name, description, slug, primarycategory, pricing, id] = re.body;
-    const { name, id, slug, description, status } = await new Response(
-      re.body
-    ).json();
+    const { name, id, slug, description, status, seokeywords } =
+      await new Response(re.body).json();
     const tools = await db.one(
       `UPDATE categories 
-         SET name = $1, description = $2, slug = $3, status = $5
+         SET name = $1, description = $2, slug = $3, status = $5, seokeywords = $6
          WHERE id = $4 returning name`,
       [
         name,
@@ -18,6 +17,7 @@ export async function POST(re: Request, res: Request) {
         slug,
         id,
         status.length <= 0 || status == "draft" ? "draft" : status,
+        seokeywords.length <= 0 ? [] : seokeywords,
       ]
     );
     console.log(tools);
