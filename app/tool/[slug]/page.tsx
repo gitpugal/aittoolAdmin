@@ -38,7 +38,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   const [isAddToolOpen, setisAddToolOpen] = useState(false);
   const [selectedTools, setSelectedTools] = useState([]);
   useEffect(() => {
-    const tools = fetch("https://admin.aitoolsnext.comapi/getTool", {
+    const tools = fetch("https://admin.aitoolsnext.com/api/getTool", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });
@@ -48,7 +48,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
       setTool(dataTool);
       setDialogData(dataTool);
     });
-    const categoryRes = fetch("https://admin.aitoolsnext.comapi/categories");
+    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
@@ -70,7 +70,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.comapi/${
+      `https://admin.aitoolsnext.com/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -97,7 +97,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   function deleteTool(id) {
     setDeleting(true);
     const res = fetch(
-      `https://admin.aitoolsnext.comapi/${
+      `https://admin.aitoolsnext.com/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -118,7 +118,7 @@ export default function Tool({ params }: { params: { slug: string } }) {
   }
   function addTools2Category() {
     setIsUpdating(true);
-    const res = fetch(`https://admin.aitoolsnext.comapi/addCategory2Tool`, {
+    const res = fetch(`https://admin.aitoolsnext.com/api/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool.id, tools: selectedTools }),
     });
@@ -137,18 +137,18 @@ export default function Tool({ params }: { params: { slug: string } }) {
 
   function fetchData() {
     
-    // const toolRes = fetch("https://admin.aitoolsnext.comapi/tools");
+    // const toolRes = fetch("https://admin.aitoolsnext.com/api/tools");
     // const categorytoolRes = fetch(
-    //   "https://admin.aitoolsnext.comapi/categoryTools"
+    //   "https://admin.aitoolsnext.com/api/categoryTools"
     // );
-    const categoryRes = fetch("https://admin.aitoolsnext.comapi/categories");
+    const categoryRes = fetch("https://admin.aitoolsnext.com/api/categories");
     categoryRes.then((val) => {
       const dat = val.json();
       dat.then((res) => {
         setCategories(res.categories);
       });
     });
-    const tools = fetch("https://admin.aitoolsnext.comapi/getTool", {
+    const tools = fetch("https://admin.aitoolsnext.com/api/getTool", {
       method: "POST",
       body: JSON.stringify({ slug: params.slug }),
     });

@@ -87,23 +87,23 @@ export default function Home() {
     }
   }, [user.status]);
   async function fetchData() {
-    const toolRes = await fetch(`https://admin.aitoolsnext.comapi/tools`, {
+    const toolRes = await fetch(`https://admin.aitoolsnext.com/api/tools`, {
       method: "POST",
       cache: "no-cache",
     });
     // const categorytoolRes = await fetch(
-    //   "https://admin.aitoolsnext.comapi/categoryTools",
+    //   "https://admin.aitoolsnext.com/api/categoryTools",
     //   {
     //     cache: "no-cache",
     //     method: "POST",
     //   }
     // );
-    const categoryRes = await fetch("https://admin.aitoolsnext.comapi/categories", {
+    const categoryRes = await fetch("https://admin.aitoolsnext.com/api/categories", {
       method: "POST",
       cache: "no-cache",
     });
 
-    const userToolRes = await fetch(`https://admin.aitoolsnext.comapi/getUserTools`, {
+    const userToolRes = await fetch(`https://admin.aitoolsnext.com/api/getUserTools`, {
       method: "POST",
       cache: "no-cache",
     });
@@ -162,7 +162,7 @@ export default function Home() {
     setIsUpdating(true);
     console.log(dialogData);
     const res = fetch(
-      `https://admin.aitoolsnext.comapi/${
+      `https://admin.aitoolsnext.com/api/${
         isActive == "1" ? "updateCategory" : "updateTool"
       }`,
       {
@@ -184,7 +184,7 @@ export default function Home() {
   function deleteTool(id) {
     setIsUpdating(true);
     const res = fetch(
-      `https://admin.aitoolsnext.comapi/${
+      `https://admin.aitoolsnext.com/api/${
         isActive == "1" ? "deleteCategory" : "deleteTool"
       }`,
       {
@@ -208,7 +208,7 @@ export default function Home() {
     console.log(selectedTools);
     const newArraya = [...selectedTools];
     console.log(newArraya);
-    const res = fetch(`https://admin.aitoolsnext.comapi/addCategory2Tool`, {
+    const res = fetch(`https://admin.aitoolsnext.com/api/addCategory2Tool`, {
       method: "POST",
       body: JSON.stringify({ id: tool, tools: newArraya }),
     });
@@ -275,7 +275,7 @@ export default function Home() {
     };
 
     console.log(JSON.stringify(toolsData));
-    const response = await fetch("https://admin.aitoolsnext.comapi/addTool", {
+    const response = await fetch("https://admin.aitoolsnext.com/api/addTool", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -334,7 +334,7 @@ export default function Home() {
     };
 
     console.log(JSON.stringify(categoryData));
-    const response = await fetch("https://admin.aitoolsnext.comapi/addCategory", {
+    const response = await fetch("https://admin.aitoolsnext.com/api/addCategory", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -363,7 +363,7 @@ export default function Home() {
   };
 
   async function addDraftToTools(id) {
-    const response = await fetch("https://admin.aitoolsnext.comapi/addDraftToTools", {
+    const response = await fetch("https://admin.aitoolsnext.com/api/addDraftToTools", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
