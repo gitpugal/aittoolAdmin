@@ -51,6 +51,7 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [dialogData, setDialogData] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isSeoUpdating, setUpdatingSeo] = useState(false);
   const [isActive, setIsactive] = useState("1");
   // const [categoryTools, setCategoryTools] = useState([]);
   const [selectedTools, setSelectedTools] = useState([]);
@@ -179,6 +180,40 @@ export default function Home() {
       });
       fetchData();
     });
+  }
+
+  async function updateSEO() {
+    setUpdatingSeo(true);
+    const res = await fetch(
+      `https://admin.aitoolsnext.com/api/${
+        isActive == "1" ? "updateseocategories" : "updateseotools"
+      }`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          id: dialogData.id,
+          title: dialogData.seotitle,
+          description: dialogData.seodescription,
+          keywords: dialogData.seokeywords,
+        }),
+      }
+    );
+
+    const data = res.json();
+    if (res.status == 200) {
+      data.then((dat) => {
+        console.log(dat);
+      });
+      toast({
+        title: "SEO details updated successfully!",
+      });
+      fetchData();
+    } else {
+      toast({
+        title: "SEO Not updated successfully!",
+      });
+    }
+    setUpdatingSeo(false);
   }
 
   function deleteTool(id) {
@@ -692,36 +727,53 @@ export default function Home() {
                     <Label htmlFor="Name" className="text-left">
                       Keywords
                     </Label>
-                      <Input
-                        onChange={seokeywordsChangeHandler}
-                        id="seoKeywords"
-                        name="seoKeywords"
-                        value={seokey}
-                        className="col-span-3"
-                      />
-                      <button className=" bg-black col-span-2 whitespace-nowrap text-white px-3 py-1 rounded-xl" onClick={addkeywords}>Add Keyword</button>
-                  </div>
-                  <div className="w-full flex flex-row flex-wrap gap-2 items-stretch justify-start">
-                    {dialogData.seokeywords != null &&
-                      dialogData.seokeywords.length > 0 &&
-                      dialogData.seokeywords.map((keyword) => (
-                        <p
-                          onClick={() => {
-                            const newkeywords = dialogData.seokeywords.filter(
-                              (it) => it != keyword
-                            );
-                            console.log(newkeywords);
-                            setDialogData((prev) => ({
-                              ...prev,
-                              seokeywords: newkeywords,
-                            }));
-                            setseokey("");
-                          }}
-                          className="bg-slate-200 px-2 py-1 text-black rounded-xl"
-                        >
-                          {keyword}
-                        </p>
-                      ))}
+                    <Input
+                      onChange={seokeywordsChangeHandler}
+                      id="seoKeywords"
+                      name="seoKeywords"
+                      value={seokey}
+                      className="col-span-3"
+                    />
+                    <div className="col-span-3 flex flex-row flex-wrap gap-2 items-stretch justify-start">
+                      {dialogData.seokeywords != null &&
+                        dialogData.seokeywords.length > 0 &&
+                        dialogData.seokeywords.map((keyword) => (
+                          <p className="bg-slate-200 px-2 py-1 text-black rounded-xl">
+                            {keyword}
+                            <Icons.close
+                              className="ml-2 cursor-pointer my-auto text-red-600 h-4 w-4 inline"
+                              onClick={() => {
+                                const newkeywords =
+                                  dialogData.seokeywords.filter(
+                                    (it) => it != keyword
+                                  );
+                                console.log(newkeywords);
+                                setDialogData((prev) => ({
+                                  ...prev,
+                                  seokeywords: newkeywords,
+                                }));
+                                setseokey("");
+                              }}
+                            />
+                          </p>
+                        ))}
+                    </div>
+                    <button
+                      className=" bg-black col-span-2 whitespace-nowrap text-white px-3 py-1 rounded-xl"
+                      onClick={addkeywords}
+                    >
+                      Add Keyword
+                    </button>
+                    <button
+                      className=" bg-black col-span-2 whitespace-nowrap text-white px-3 py-1 rounded-xl"
+                      onClick={updateSEO}
+                    >
+                      {isSeoUpdating ? (
+                        <Icons.spinner className="mx-auto my-1 h-4 w-4 animate-spin" />
+                      ) : (
+                        "Save"
+                      )}
+                    </button>
                   </div>
                 </div>
               </TabsContent>

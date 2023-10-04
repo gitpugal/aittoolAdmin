@@ -17,7 +17,7 @@ export async function POST(req: Request, res: Request) {
     let res;
     const result = await db
       .one(
-        "INSERT INTO tools(name, short_description, description, alternative_description, features, faq, upvotes, image, seo_title, seo_description, slug, pricing, primarycategory, status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) returning id",
+        "INSERT INTO tools(name, short_description, description, alternative_description, features, faq, upvotes, image, slug, pricing, primarycategory, status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning id",
         [
           name,
           description,
@@ -27,8 +27,6 @@ export async function POST(req: Request, res: Request) {
           "Frequently asked questions about the dummy tool.",
           upvotes || 0,
           imageURL || "Unkwon.jpg",
-          "Dummy Tool SEO Title",
-          "SEO description for the dummy tool.",
           slug,
           pricing || "Not Specified",
           primarycategory,
