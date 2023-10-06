@@ -1,13 +1,6 @@
 "use client";
 
-import CardList from "@/components/CardList";
-import { TableDemo } from "@/components/CardTable";
-import {
-  categoryColumns,
-  toolColumns,
-  userToolsColumns,
-} from "@/components/Columns";
-import DemoPage from "@/components/Table";
+import { categoryColumns, toolColumns } from "@/components/Columns";
 import { DataTable } from "@/components/data-table";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
@@ -38,6 +31,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
+import * as cheerio from "cheerio";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -67,6 +61,7 @@ export default function Home() {
   const [toolPrimaryCategory, setToolprimaryCategory] = useState(null);
   const [toolStatus, setToolStatus] = useState("");
   const [seokey, setseokey] = useState("");
+  const [scrapingURL, setscrapingURL] = useState("");
   const pricingOptions = ["Free", "Premium"];
   const sideBarLinks = [
     {
@@ -180,7 +175,7 @@ export default function Home() {
       });
       fetchData();
     });
-    setIsUpdating(false)
+    setIsUpdating(false);
   }
 
   async function updateSEO() {
@@ -426,6 +421,20 @@ export default function Home() {
 
       setseokey("");
     }
+  }
+
+  async function scrapeURL() {
+    const res = await fetch("https://admin.aitoolsnext.com/api/getHtml", {
+      method: "POST",
+      body: JSON.stringify({ url: scrapingURL }),
+    });
+    const data = await res.json();
+    const $ = cheerio.load(data.html);
+    $("script, style, img").remove();
+    let innerHtmlCOntent = $.text();
+    innerHtmlCOntent = innerHtmlCOntent.replace(/\s+/g, " ").trim();
+    innerHtmlCOntent = innerHtmlCOntent.replace(/<[^>]*>/g, "");
+    console.log(innerHtmlCOntent)
   }
 
   useEffect(() => {
@@ -963,6 +972,18 @@ export default function Home() {
                   value={toolImageUrl}
                   onChange={(e) => setToolImageUrl(e.target.value)}
                 />
+              </>
+              <>
+                {" "}
+                <Label htmlFor="scrapingURL" className="text-left">
+                  Or Extract from link
+                </Label>
+                <Input
+                  id="scrapingURL"
+                  value={scrapingURL}
+                  onChange={(e) => setscrapingURL(e.target.value)}
+                />
+                <Button onClick={scrapeURL}>scrape</Button>
               </>
               <DialogFooter>
                 <Button onClick={handleCloseAddToolDialog}>Cancel</Button>
