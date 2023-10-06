@@ -180,6 +180,7 @@ export default function Home() {
       });
       fetchData();
     });
+    setIsUpdating(false)
   }
 
   async function updateSEO() {
@@ -984,13 +985,7 @@ export default function Home() {
             data={
               isActive == "1" ? categories : isActive == "2" ? tools : userTools
             }
-            columns={
-              isActive == "1"
-                ? categoryColumns
-                : isActive == "2"
-                ? toolColumns
-                : userToolsColumns
-            }
+            columns={isActive == "1" ? categoryColumns : toolColumns}
           />
         </div>
       </div>
