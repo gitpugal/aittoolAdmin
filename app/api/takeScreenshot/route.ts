@@ -14,14 +14,14 @@ export async function POST(re: Request, res: Request) {
     const { slug, url } = await new Response(re.body).json();
     console.log(slug + " " + url);
 
-    await captureWebsite.file(url, `public/assets/${slug}.png`);
+    const buff = await captureWebsite.base64(url);
 
     // Commit and push the changes to the GitLab repository using GitLab API
     const apiUrl = `https://gitlab.com/api/v4/projects/pugalarasan_git%2Ftest/repository/files/public%2Fassets%2F${slug}.png`;
 
-    const fileContent = require("fs")
-      .readFileSync(`public/assets/${slug}.png`)
-      .toString("base64");
+    // const fileContent = require("fs")
+    //   .readFileSync(`public/assets/${slug}.png`)
+    //   .toString("base64");
 
     const response = await fetch(apiUrl, {
       method: "POST",
@@ -31,7 +31,7 @@ export async function POST(re: Request, res: Request) {
       },
       body: JSON.stringify({
         branch: "main", // Update with your branch name
-        content: fileContent,
+        content: buff.toString(),
         "PRIVATE-TOKEN": "glpat-socyJu6y22yVJBWUmtoT",
         encoding: "base64",
         commit_message: `Add ${slug}.png`,
