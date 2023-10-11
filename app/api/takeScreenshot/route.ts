@@ -55,7 +55,9 @@ export async function POST(re: Request, res: Request) {
     const data = await response.json();
     console.log(data);
     return new Response(
-      `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
+      JSON.stringify({
+        imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
+      }),
       {
         status: 200,
       }
