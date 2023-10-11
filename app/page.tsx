@@ -495,9 +495,9 @@ export default function Home() {
       body: JSON.stringify({ slug: result?.slug, url: scrapingURL }),
     });
     console.log("IMAGEYRL: ");
-    const { imageURL } = await resa.json();
-    console.log(imageURL);
-    setToolImageUrl(imageURL);
+    // const { imageURL } = await resa.json();
+    console.log(resa);
+    // setToolImageUrl(imageURL);
     if (result.pricing.price < 1) {
       console.log("free");
       setToolPricing("Free");
