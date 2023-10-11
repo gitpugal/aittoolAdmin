@@ -10,11 +10,23 @@ export async function POST(re: Request, res: Request) {
     );
     const { slug, url } = await new Response(re.body).json();
     // console.log(slug + " " + url);
+    try{
 
-    await captureWebsite.base64(url).then((res) => {
-     bol = res
-     console.log(bol)
-    });
+      await captureWebsite.base64(url).then((res) => {
+       bol = res
+       console.log(bol)
+      });
+    }catch(err){
+      return new Response(
+        JSON.stringify({
+          blerrovbb: err,
+          imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
+        }),
+        {
+          status: 200,
+        }
+      );
+    }
   
     return new Response(
       JSON.stringify({
