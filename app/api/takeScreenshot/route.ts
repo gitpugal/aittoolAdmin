@@ -52,8 +52,8 @@ export async function POST(re: Request, res: Request) {
     } else {
       console.log("not saved");
     }
-    const data = await response.json();
-    console.log(data);
+    // const data = await response.json();
+    // console.log(data);
     return new Response(
       JSON.stringify({
         imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
