@@ -61,7 +61,7 @@ export async function POST(re: Request, res: Request) {
       }
     );
   } catch (error) {
-    console.error("Error retrieving data: ", error);
+    console.error(error);
     return new Response(JSON.stringify({ message: "Cannot retrieve data" }), {
       status: 404,
     });
