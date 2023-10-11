@@ -4,40 +4,40 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 // Adjust the path as needed
 export async function POST(re: Request, res: Request) {
-  const gitlabApiUrl = "https://gitlab.com/api/v4"; // Update with your GitLab instance URL
-  const repoPath = "pugalarasan_git/test"; // Update with your GitLab namespace and repository name
-  const accessToken = "glpat-UAVvcVfY_vmnQCn5GLMJ";
+  // const gitlabApiUrl = "https://gitlab.com/api/v4"; // Update with your GitLab instance URL
+  // const repoPath = "pugalarasan_git/test"; // Update with your GitLab namespace and repository name
+  // const accessToken = "glpat-UAVvcVfY_vmnQCn5GLMJ";
   try {
     console.log(
       "------------------------------------------------------------------------------------"
     );
     const { slug, url } = await new Response(re.body).json();
-    console.log(slug + " " + url);
+    // console.log(slug + " " + url);
 
-    const buff = await captureWebsite.base64(url);
+    // const buff = await captureWebsite.base64(url);
 
     // Commit and push the changes to the GitLab repository using GitLab API
-    const apiUrl = `https://gitlab.com/api/v4/projects/pugalarasan_git%2Ftest/repository/files/public%2Fassets%2F${slug}.png`;
+    // const apiUrl = `https://gitlab.com/api/v4/projects/pugalarasan_git%2Ftest/repository/files/public%2Fassets%2F${slug}.png`;
 
     // const fileContent = require("fs")
     //   .readFileSync(`public/assets/${slug}.png`)
     //   .toString("base64");
 
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "PRIVATE-TOKEN": "glpat-socyJu6y22yVJBWUmtoT",
-      },
-      body: JSON.stringify({
-        branch: "main", // Update with your branch name
-        content: buff.toString(),
-        "PRIVATE-TOKEN": "glpat-socyJu6y22yVJBWUmtoT",
-        encoding: "base64",
-        commit_message: `Add ${slug}.png`,
-        execute_filemode: true,
-      }),
-    });
+    // const response = await fetch(apiUrl, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "PRIVATE-TOKEN": "glpat-socyJu6y22yVJBWUmtoT",
+    //   },
+    //   body: JSON.stringify({
+    //     branch: "main", // Update with your branch name
+    //     content: buff.toString(),
+    //     "PRIVATE-TOKEN": "glpat-socyJu6y22yVJBWUmtoT",
+    //     encoding: "base64",
+    //     commit_message: `Add ${slug}.png`,
+    //     execute_filemode: true,
+    //   }),
+    // });
 
     // if (response.ok) {
     //   console.log("saved to git");
