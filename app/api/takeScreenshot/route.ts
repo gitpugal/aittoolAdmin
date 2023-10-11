@@ -39,29 +39,8 @@ export async function POST(re: Request, res: Request) {
       }),
     });
 
-    if (response.ok) {
-      console.log("saved to git");
-      return new Response(
-        JSON.stringify({
-          imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
-        }),
-        {
-          status: 200,
-        }
-      );
-    } else {
-      return new Response(
-        JSON.stringify({
-          res: response,
-          imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
-        }),
-        {
-          status: 200,
-        }
-      );
-    }
-    // const data = await response.json();
-    // console.log(data);
+    // if (response.ok) {
+    //   console.log("saved to git");
     return new Response(
       JSON.stringify({
         imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
@@ -70,6 +49,27 @@ export async function POST(re: Request, res: Request) {
         status: 200,
       }
     );
+    // } else {
+    //   return new Response(
+    //     JSON.stringify({
+    //       res: response,
+    //       imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
+    //     }),
+    //     {
+    //       status: 200,
+    //     }
+    //   );
+    // }
+    // const data = await response.json();
+    // // console.log(data);
+    // return new Response(
+    //   JSON.stringify({
+    //     imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
+    //   }),
+    //   {
+    //     status: 200,
+    //   }
+    // );
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify({ message: error }), {
