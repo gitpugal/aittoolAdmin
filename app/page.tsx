@@ -497,6 +497,10 @@ export default function Home() {
     console.log("IMAGEYRL: ");
     // const { imageURL } = await resa.json();
     console.log(resa);
+    const dataa = await resa.body;
+    const dataaa = await resa.json();
+    console.log(dataa);
+    console.log(dataaa);
     // setToolImageUrl(imageURL);
     if (result.pricing.price < 1) {
       console.log("free");
