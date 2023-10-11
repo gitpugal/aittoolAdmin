@@ -14,7 +14,7 @@ export async function POST(re: Request, res: Request) {
     const { slug, url } = await new Response(re.body).json();
     // console.log(slug + " " + url);
 
-    const buff = await captureWebsite.base64(url);
+    const buff =  captureWebsite.base64(url);
 
     // Commit and push the changes to the GitLab repository using GitLab API
     // const apiUrl = `https://gitlab.com/api/v4/projects/pugalarasan_git%2Ftest/repository/files/public%2Fassets%2F${slug}.png`;
