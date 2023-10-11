@@ -32,6 +32,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import * as cheerio from "cheerio";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+// This code is for v4 of the openai package: npmjs.com/package/openai
+import OpenAI from "openai";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -62,6 +66,8 @@ export default function Home() {
   const [toolStatus, setToolStatus] = useState("");
   const [seokey, setseokey] = useState("");
   const [scrapingURL, setscrapingURL] = useState("");
+  const [isScraping, setIsScraping] = useState(false);
+
   const pricingOptions = ["Free", "Premium"];
   const sideBarLinks = [
     {
@@ -424,17 +430,84 @@ export default function Home() {
   }
 
   async function scrapeURL() {
+    setIsScraping(true);
     const res = await fetch("https://admin.aitoolsnext.com/api/getHtml", {
       method: "POST",
-      body: JSON.stringify({ url: scrapingURL }),
+      body: JSON.stringify({ url: scrapingURL, slug: toolSlug }),
     });
     const data = await res.json();
+    setToolImageUrl(data.imageURL);
     const $ = cheerio.load(data.html);
     $("script, style, img").remove();
     let innerHtmlCOntent = $.text();
     innerHtmlCOntent = innerHtmlCOntent.replace(/\s+/g, " ").trim();
     innerHtmlCOntent = innerHtmlCOntent.replace(/<[^>]*>/g, "");
-    console.log(innerHtmlCOntent)
+    // console.log(innerHtmlCOntent);
+
+    const openai = new OpenAI({
+      apiKey: "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",
+      dangerouslyAllowBrowser: true,
+    });
+
+    console.log("loading");
+
+    const completion = await openai.completions.create({
+      model: "gpt-3.5-turbo-instruct",
+      max_tokens: 800, // Adjust the number based on your needs
+
+      prompt:
+        innerHtmlCOntent +
+        ` Fit the above data into the below document format  {
+    "name": "Product Name",
+    "short_description": "A brief product description.",
+    "description": "A detailed product description.",
+    "alternative_description": "An alternative product description.",
+    "features": ["Feature 1", "Feature 2", "Feature 3"],
+    "faq": [
+      {"question": "FAQ Question 1", "answer": "FAQ Answer 1"},
+      {"question": "FAQ Question 2", "answer": "FAQ Answer 2"}
+    ],
+    "upvotes": 100,
+    "image": "path/to/image.jpg",
+    "slug": "product-name",
+    "pricing": {
+      "price": 99.99,
+      "currency": "USD",
+      "discounted_price": 79.99
+    },
+    "primarycategory": "Category Name"
+  }`,
+    });
+    // const completion = await openai.chat.completions.create({
+    //   messages: [{ role: "system", content:  }],
+    //   model: "gpt-3.5-turbo",
+    // });
+
+    console.log(completion.choices[0].text);
+    const result = await JSON.parse(completion.choices[0].text);
+    setToolName(result.name);
+    setToolDescription(result.description);
+    setToolprimaryCategory(result.primarycategory);
+    setToolSlug(result.slug);
+    setToolFeatures(result.features.toString());
+    const resa = await fetch("https://admin.aitoolsnext.com/api/takeScreenshot", {
+      method: "POST",
+      body: JSON.stringify({ slug: result?.slug, url: scrapingURL }),
+    });
+    console.log("IMAGEYRL: ");
+    const { imageURL } = await new Response(resa.body).json();
+    // console.log(imageURL);
+    setToolImageUrl(imageURL);
+    if (result.pricing.price < 1) {
+      console.log("free");
+      setToolPricing("Free");
+    } else {
+      console.log("pre");
+      setToolPricing("Premium");
+    }
+    console.log("completed/...");
+    console.log("hihih");
+    setIsScraping(false);
   }
 
   useEffect(() => {
@@ -462,7 +535,12 @@ export default function Home() {
           Logout
         </Button>
       </div>
-
+      {/* <img
+      width={1000}
+      height={1000}
+      src={"https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/screenshot.png"}
+      alt="testing"
+    /> */}
       {/* edit dialog */}
 
       {dialogData && (
@@ -488,6 +566,7 @@ export default function Home() {
                       Name
                     </Label>
                     <Input
+                      disabled={isScraping}
                       onChange={changeHandler}
                       id="Name"
                       name="name"
@@ -511,6 +590,7 @@ export default function Home() {
                       Slug
                     </Label>
                     <Input
+                      disabled={isScraping}
                       onChange={changeHandler}
                       id="slug"
                       name="slug"
@@ -715,6 +795,7 @@ export default function Home() {
                       Title
                     </Label>
                     <Input
+                      disabled={isScraping}
                       onChange={changeHandler}
                       id="seoTitle"
                       name="seotitle"
@@ -727,6 +808,7 @@ export default function Home() {
                       Description
                     </Label>
                     <Input
+                      disabled={isScraping}
                       className="col-span-3"
                       name="seodescription"
                       onChange={changeHandler}
@@ -738,6 +820,7 @@ export default function Home() {
                       Keywords
                     </Label>
                     <Input
+                      disabled={isScraping}
                       onChange={seokeywordsChangeHandler}
                       id="seoKeywords"
                       name="seoKeywords"
@@ -831,6 +914,7 @@ export default function Home() {
                   Name
                 </Label>
                 <Input
+                  disabled={isScraping}
                   id="toolName"
                   value={toolName}
                   onChange={(e) => setToolName(e.target.value)}
@@ -853,6 +937,7 @@ export default function Home() {
                     Features
                   </Label>
                   <Input
+                    disabled={isScraping}
                     id="toolFeatuers"
                     value={toolFeatures}
                     onChange={(e) => setToolFeatures(e.target.value)}
@@ -869,6 +954,7 @@ export default function Home() {
                     onValueChange={(e) => {
                       setToolPricing(e);
                     }}
+                    value={toolPricing}
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder={""} />
@@ -878,7 +964,7 @@ export default function Home() {
                         <SelectLabel>
                           {dialogData && dialogData.pricing != null
                             ? dialogData.pricing
-                            : ""}
+                            : toolPricing}
                         </SelectLabel>
                         <SelectItem value={"Free"}>Free</SelectItem>
                         <SelectItem value={"Premium"}>Premium</SelectItem>
@@ -956,6 +1042,7 @@ export default function Home() {
                   Slug
                 </Label>
                 <Input
+                  disabled={isScraping}
                   value={toolSlug}
                   id="toolSlug"
                   onChange={(e) => setToolSlug(e.target.value)}
@@ -968,6 +1055,7 @@ export default function Home() {
                   Image
                 </Label>
                 <Input
+                  disabled
                   id="toolImageUrl"
                   value={toolImageUrl}
                   onChange={(e) => setToolImageUrl(e.target.value)}
@@ -979,18 +1067,27 @@ export default function Home() {
                   Or Extract from link
                 </Label>
                 <Input
+                  disabled={isScraping}
                   id="scrapingURL"
                   value={scrapingURL}
                   onChange={(e) => setscrapingURL(e.target.value)}
                 />
-                <Button onClick={scrapeURL}>scrape</Button>
+                <Button disabled={isScraping} onClick={scrapeURL}>
+                  {isScraping ? <Loader2 className="animate-spin" /> : "Scrape"}
+                </Button>
               </>
               <DialogFooter>
-                <Button onClick={handleCloseAddToolDialog}>Cancel</Button>
+                <Button
+                  disabled={isScraping}
+                  onClick={handleCloseAddToolDialog}
+                >
+                  Cancel
+                </Button>
                 <Button
                   onClick={
                     isActive != "1" ? handleSaveTool : handleSaveCategory
                   }
+                  disabled={isScraping}
                 >
                   Save
                 </Button>

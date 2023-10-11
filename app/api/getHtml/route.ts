@@ -5,14 +5,17 @@ import { json } from "stream/consumers";
 // Adjust the path as needed
 export async function POST(re: Request, res: Request) {
   try {
-    const { url } = await new Response(re.body).json();
+    const { slug, url } = await new Response(re.body).json();
+    console.log(slug + " " + url);
     const tools = await fetch(url);
     const data = await tools.text();
-    console.log(data);
+    // console.log(data);
+
     return new Response(JSON.stringify({ html: data }), {
       status: 200,
     });
   } catch (error) {
+    console.log("GETHML ERROR");
     console.log(error);
     return new Response("No Tool!", {
       status: 505,
