@@ -3,6 +3,7 @@ import captureWebsite from "capture-website";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export async function POST(re: Request, res: Request) {
+  let bol;
   try {
     console.log(
       "------------------------------------------------------------------------------------"
@@ -10,35 +11,14 @@ export async function POST(re: Request, res: Request) {
     const { slug, url } = await new Response(re.body).json();
     // console.log(slug + " " + url);
 
-    const buff = await captureWebsite.base64(url);
-
-    // const apiUrl = `https://gitlab.com/api/v4/projects/pugalarasan_git%2Ftest/repository/files/public%2Fassets%2F${slug}.png`;
-
-    // const fileContent = require("fs")
-    //   .readFileSync(`public/assets/${slug}.png`)
-    //   .toString("base64");
-
-    // const response = await fetch(apiUrl, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "PRIVATE-TOKEN": "glpat-socyJu6y22yVJBWUmtoT",
-    //   },
-    //   body: JSON.stringify({
-    //     branch: "main", // Update with your branch name
-    //     content: buff.toString(),
-    //     "PRIVATE-TOKEN": "glpat-socyJu6y22yVJBWUmtoT",
-    //     encoding: "base64",
-    //     commit_message: `Add ${slug}.png`,
-    //     execute_filemode: true,
-    //   }),
-    // });
-
-    // if (response.ok) {
-    //   console.log("saved to git");
+    await captureWebsite.base64(url).then((res) => {
+     bol = res
+     console.log(bol)
+    });
+  
     return new Response(
       JSON.stringify({
-        blovbb: buff.toString(),
+        blovbb: bol,
         imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
       }),
       {
