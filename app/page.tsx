@@ -498,8 +498,8 @@ export default function Home() {
     // const { imageURL } = await resa.json();
     console.log(resa);
     const dataa = await resa.body;
-    const dataaa = await resa.json();
     console.log(dataa);
+    const dataaa = await resa.json();
     console.log(dataaa);
     // setToolImageUrl(imageURL);
     if (result.pricing.price < 1) {
