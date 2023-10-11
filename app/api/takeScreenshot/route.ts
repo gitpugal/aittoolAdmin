@@ -50,7 +50,15 @@ export async function POST(re: Request, res: Request) {
         }
       );
     } else {
-      console.log("not saved");
+      return new Response(
+        JSON.stringify({
+          res: response,
+          imageURL: `https://gitlab.com/pugalarasan_git/test/-/raw/main/public/assets/${slug}.png`,
+        }),
+        {
+          status: 200,
+        }
+      );
     }
     // const data = await response.json();
     // console.log(data);
